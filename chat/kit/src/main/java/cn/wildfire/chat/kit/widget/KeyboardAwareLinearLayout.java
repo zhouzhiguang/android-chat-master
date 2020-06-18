@@ -27,11 +27,14 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.View;
 
+import androidx.appcompat.widget.LinearLayoutCompat;
+
+import com.apkfuns.logutils.LogUtils;
+
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
-import androidx.appcompat.widget.LinearLayoutCompat;
 import cn.wildfire.chat.kit.utils.ServiceUtil;
 import cn.wildfirechat.chat.R;
 
@@ -133,7 +136,7 @@ public class KeyboardAwareLinearLayout extends LinearLayoutCompat {
     }
 
     protected void onKeyboardOpen(int keyboardHeight) {
-        Log.i(TAG, "onKeyboardOpen(" + keyboardHeight + ")");
+        LogUtils.e(TAG + "事件起源onKeyboardOpen(" + keyboardHeight + ")");
         keyboardOpen = true;
 
         notifyShownListeners();

@@ -1,5 +1,6 @@
 package cn.wildfire.chat.kit.conversation;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -215,6 +216,7 @@ public class GroupConversationInfoFragment extends Fragment implements Conversat
     }
 
 
+    @SuppressLint("FragmentLiveDataObserve")
     private void loadAndShowGroupMembers(boolean refresh) {
         groupViewModel.getGroupMembersLiveData(conversationInfo.conversation.target, refresh)
                 .observe(this, groupMembers -> {

@@ -32,6 +32,7 @@ public class MediaMessageContentViewHolder extends NormalMessageContentViewHolde
         }
     }
 
+    //预览多媒体
     protected void previewMM() {
         List<UiMessage> messages = ((ConversationMessageAdapter) adapter).getMessages();
         List<MediaEntry> entries = new ArrayList<>();

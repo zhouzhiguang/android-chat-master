@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.apkfuns.logutils.LogUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -236,6 +237,9 @@ public class ConversationMessageAdapter extends RecyclerView.Adapter<RecyclerVie
 
         int direction = viewType >> 24;
         int messageType = viewType & 0x7FFFFF;
+        LogUtils.e("看一下发送还是接受的direction：" + direction);
+        LogUtils.e("看一下viewType：" + viewType);
+        LogUtils.e("看一下messagetyppe：" + messageType);
         Class<? extends MessageContentViewHolder> viewHolderClazz = MessageViewHolderManager.getInstance().getMessageContentViewHolder(messageType);
         SendLayoutRes sendLayoutRes = viewHolderClazz.getAnnotation(SendLayoutRes.class);
         ReceiveLayoutRes receiveLayoutRes = viewHolderClazz.getAnnotation(ReceiveLayoutRes.class);
@@ -358,14 +362,14 @@ public class ConversationMessageAdapter extends RecyclerView.Adapter<RecyclerVie
 
     private void processPortraitLongClick(MessageContentViewHolder viewHolder, View itemView) {
         itemView.findViewById(R.id.portraitImageView).setOnLongClickListener(v -> {
-                if (onPortraitLongClickListener != null) {
-                    int position = viewHolder.getAdapterPosition();
-                    UiMessage message = getItem(position);
-                    onPortraitLongClickListener.onPortraitLongClick(ChatManager.Instance().getUserInfo(message.message.sender, false));
-                    return true;
+                    if (onPortraitLongClickListener != null) {
+                        int position = viewHolder.getAdapterPosition();
+                        UiMessage message = getItem(position);
+                        onPortraitLongClickListener.onPortraitLongClick(ChatManager.Instance().getUserInfo(message.message.sender, false));
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
         );
     }
 
@@ -443,23 +447,23 @@ public class ConversationMessageAdapter extends RecyclerView.Adapter<RecyclerVie
                                     content = menuItem.contextMenuItem.confirmPrompt();
                                 }
                                 new MaterialDialog.Builder(fragment.getContext())
-                                    .content(content)
-                                    .negativeText("取消")
-                                    .positiveText("确认")
-                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            try {
-                                                menuItem.method.invoke(viewHolder, itemView, message);
-                                            } catch (IllegalAccessException e) {
-                                                e.printStackTrace();
-                                            } catch (InvocationTargetException e) {
-                                                e.printStackTrace();
+                                        .content(content)
+                                        .negativeText("取消")
+                                        .positiveText("确认")
+                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                            @Override
+                                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                                try {
+                                                    menuItem.method.invoke(viewHolder, itemView, message);
+                                                } catch (IllegalAccessException e) {
+                                                    e.printStackTrace();
+                                                } catch (InvocationTargetException e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
-                                        }
-                                    })
-                                    .build()
-                                    .show();
+                                        })
+                                        .build()
+                                        .show();
 
                             } else {
                                 contextMenus.get(position).method.invoke(viewHolder, itemView, message);
@@ -525,6 +529,11 @@ public class ConversationMessageAdapter extends RecyclerView.Adapter<RecyclerVie
             return R.layout.conversation_item_loading;
         }
         Message msg = getItem(position).message;
+        int itemviewtype = msg.direction.value() << 24 | msg.content.getType();
+        int res = msg.direction.value() << 24;
+        int res1 = msg.content.getType();
+        LogUtils.e("查看消息类型type：" + res + "后面：" + res1);
+        LogUtils.e("查看消息类型结果：" + itemviewtype);
         return msg.direction.value() << 24 | msg.content.getType();
     }
 

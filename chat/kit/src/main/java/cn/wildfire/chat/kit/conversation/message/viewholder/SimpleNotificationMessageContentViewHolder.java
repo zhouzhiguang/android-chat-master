@@ -59,7 +59,7 @@ import cn.wildfirechat.message.notification.TransferGroupOwnerNotificationConten
  */
 
 public class SimpleNotificationMessageContentViewHolder extends NotificationMessageContentViewHolder {
-
+    ExampleRichNotificationMessageContentViewHolder exampleRichNotificationMessageContentViewHolder;
     @BindView(R.id.notificationTextView)
     TextView notificationTextView;
     ExampleRichNotificationMessageContentViewHolder holder;

@@ -6,8 +6,12 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.apkfuns.logutils.LogUtils;
+
 import cn.wildfire.chat.kit.utils.ServiceUtil;
 
+//布局里面
 public class InputAwareLayout extends KeyboardAwareLinearLayout implements KeyboardAwareLinearLayout.OnKeyboardShownListener {
     private InputView current;
 
@@ -26,10 +30,12 @@ public class InputAwareLayout extends KeyboardAwareLinearLayout implements Keybo
 
     @Override
     public void onKeyboardShown() {
+
         hideAttachedInput(true);
     }
 
     public void show(@NonNull final EditText imeTarget, @NonNull final InputView input) {
+        LogUtils.e("看一下显示了吗？");
         if (isKeyboardOpen()) {
             hideSoftkey(imeTarget, new Runnable() {
                 @Override
@@ -65,6 +71,7 @@ public class InputAwareLayout extends KeyboardAwareLinearLayout implements Keybo
     }
 
     public void showSoftkey(final EditText inputTarget) {
+        LogUtils.e("是调用你弹出输入法的吗--------》");
         postOnKeyboardOpen(new Runnable() {
             @Override
             public void run() {
@@ -74,6 +81,7 @@ public class InputAwareLayout extends KeyboardAwareLinearLayout implements Keybo
         inputTarget.post(new Runnable() {
             @Override
             public void run() {
+                LogUtils.e("是调用你弹出输入法的吗--------》");
                 inputTarget.requestFocus();
                 ServiceUtil.getInputMethodManager(inputTarget.getContext()).showSoftInput(inputTarget, 0);
             }

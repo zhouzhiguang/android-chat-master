@@ -6,7 +6,8 @@ import android.os.Parcelable;
 import cn.wildfirechat.message.Message;
 
 /**
- * Created by heavyrain on 2017/12/13.
+ * 会话信息包含最后一条信息
+
  */
 
 public class ConversationInfo implements Parcelable {

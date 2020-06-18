@@ -88,7 +88,7 @@ public abstract class NormalMessageContentViewHolder extends MessageContentViewH
         super.onBind(message, position);
         this.message = message;
         this.position = position;
-
+        //设置发件人的头像名字等信息
         setSenderAvatar(message.message);
         setSenderName(message.message);
         setSendStatus(message.message);
@@ -145,12 +145,12 @@ public abstract class NormalMessageContentViewHolder extends MessageContentViewH
     @OnClick(R.id.errorLinearLayout)
     public void onRetryClick(View itemView) {
         new MaterialDialog.Builder(fragment.getContext())
-            .content("重新发送?")
-            .negativeText("取消")
-            .positiveText("重发")
-            .onPositive((dialog, which) -> messageViewModel.resendMessage(message.message))
-            .build()
-            .show();
+                .content("重新发送?")
+                .negativeText("取消")
+                .positiveText("重发")
+                .onPositive((dialog, which) -> messageViewModel.resendMessage(message.message))
+                .build()
+                .show();
     }
 
     @Optional
@@ -200,7 +200,7 @@ public abstract class NormalMessageContentViewHolder extends MessageContentViewH
                 }
                 GroupMember groupMember = groupViewModel.getGroupMember(message.conversation.target, ChatManager.Instance().getUserId());
                 if (groupMember != null && (groupMember.type == GroupMember.GroupMemberType.Manager
-                    || groupMember.type == GroupMember.GroupMemberType.Owner)) {
+                        || groupMember.type == GroupMember.GroupMemberType.Owner)) {
                     return false;
                 }
             }
@@ -208,8 +208,8 @@ public abstract class NormalMessageContentViewHolder extends MessageContentViewH
             long delta = ChatManager.Instance().getServerDeltaTime();
             long now = System.currentTimeMillis();
             if (message.direction == MessageDirection.Send
-                && TextUtils.equals(message.sender, ChatManager.Instance().getUserId())
-                && now - (message.serverTime - delta) < 60 * 1000) {
+                    && TextUtils.equals(message.sender, ChatManager.Instance().getUserId())
+                    && now - (message.serverTime - delta) < 60 * 1000) {
                 return false;
             } else {
                 return true;
@@ -219,7 +219,7 @@ public abstract class NormalMessageContentViewHolder extends MessageContentViewH
         // 只有channel 主可以发起
         if (MessageContextMenuItemTags.TAG_CHANEL_PRIVATE_CHAT.equals(tag)) {
             if (uiMessage.message.conversation.type == Conversation.ConversationType.Channel
-                && uiMessage.message.direction == MessageDirection.Receive) {
+                    && uiMessage.message.direction == MessageDirection.Receive) {
                 return false;
             }
             return true;
@@ -232,11 +232,11 @@ public abstract class NormalMessageContentViewHolder extends MessageContentViewH
         UserInfo userInfo = ChatManagerHolder.gChatManager.getUserInfo(item.sender, false);
         if (portraitImageView != null) {
             GlideApp
-                .with(fragment)
-                .load(userInfo.portrait)
-                .transforms(new CenterCrop(), new RoundedCorners(10))
-                .placeholder(R.mipmap.avatar_def)
-                .into(portraitImageView);
+                    .with(fragment)
+                    .load(userInfo.portrait)
+                    .transforms(new CenterCrop(), new RoundedCorners(10))
+                    .placeholder(R.mipmap.avatar_def)
+                    .into(portraitImageView);
         }
     }
 

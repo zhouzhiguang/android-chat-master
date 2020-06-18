@@ -102,6 +102,7 @@ public class ChatManager {
 
     private String SERVER_HOST;
 
+    //通过client 可以调用服务里面的方法
     private static IRemoteClient mClient;
 
     private static ChatManager INST;
@@ -272,6 +273,7 @@ public class ChatManager {
      * @param userSource 用户信息源
      */
     public void setUserSource(UserSource userSource) {
+
         this.userSource = userSource;
     }
 
@@ -490,6 +492,7 @@ public class ChatManager {
         });
     }
 
+    //设置事件分发
     private void onSettingUpdated() {
         mainHandler.post(() -> {
             for (OnSettingUpdateListener listener : settingUpdateListeners) {
@@ -508,6 +511,8 @@ public class ChatManager {
 
     /**
      * 添加新消息监听, 记得调用{@link #removeOnReceiveMessageListener(OnReceiveMessageListener)}删除监听
+     * <p>
+     * 为需要监听接收的类添加接收消失监听
      *
      * @param listener
      */
@@ -1861,7 +1866,7 @@ public class ChatManager {
     /**
      * 获取会话消息
      *
-     * @param conversation
+     * @param conversation 会话
      * @param fromIndex    消息起始id(messageId)
      * @param before       true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
      * @param count        获取消息条数
@@ -2042,7 +2047,7 @@ public class ChatManager {
 
 
     /**
-     * 获取远程历史消息
+     * 获取远端服务器历史消息
      *
      * @param conversation    会话
      * @param beforeMessageId 起始消息的消息id
@@ -4463,7 +4468,7 @@ public class ChatManager {
     }
 
     /*
-    是否开启了已送达报告和已读报告功能
+      是否开启了已送达报告和已读报告功能
      */
     public boolean isReceiptEnabled() {
         if (!checkRemoteService()) {
@@ -4859,8 +4864,8 @@ public class ChatManager {
                 mClient.setOnReceiveMessageListener(new IOnReceiveMessageListener.Stub() {
                     @Override
                     public void onReceive(List<Message> messages, boolean hasMore) throws RemoteException {
-                        LogUtils.e("ChatManager接受到消息：" + messages);
-                        LogUtils.e("ChatManager接受到消息：" + hasMore);
+                        LogUtils.e("ChatManager接受到服务消息：" + messages);
+                        LogUtils.e("ChatManager接受到服务的消息：" + hasMore);
                         onReceiveMessage(messages, hasMore);
                     }
 
@@ -4877,6 +4882,7 @@ public class ChatManager {
 
                     @Override
                     public void onDelivered(Map deliveryMap) throws RemoteException {
+                        //消息已经送达
                         onMsgDelivered(deliveryMap);
                     }
 
@@ -4924,6 +4930,7 @@ public class ChatManager {
                 mClient.setOnSettingUpdateListener(new IOnSettingUpdateListener.Stub() {
                     @Override
                     public void onSettingUpdated() throws RemoteException {
+                        //设置跟新
                         ChatManager.this.onSettingUpdated();
                     }
                 });

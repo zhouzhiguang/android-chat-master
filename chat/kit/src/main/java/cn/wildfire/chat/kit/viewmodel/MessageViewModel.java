@@ -229,10 +229,6 @@ public class MessageViewModel extends ViewModel implements OnReceiveMessageListe
         AudioPlayManager.getInstance().stopPlay();
     }
 
-    public void sendMessage(Conversation conversation, List<String> toUsers, MessageContent content) {
-
-    }
-
     public void sendMessage(Conversation conversation, MessageContent content) {
         Message msg = new Message();
         msg.conversation = conversation;
@@ -265,6 +261,7 @@ public class MessageViewModel extends ViewModel implements OnReceiveMessageListe
         if (!TextUtils.isEmpty(thumbParam)) {
             imgContent.setThumbPara(ChatManager.Instance().getImageThumbPara());
         }
+        LogUtils.e("测试一下发送图片了："+imgContent.toString());
         sendMessage(conversation, imgContent);
     }
 

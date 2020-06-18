@@ -18,11 +18,13 @@ public class Message implements Parcelable {
 
     public long messageId;
     public Conversation conversation;
+    //发件人
     public String sender;
     /**
      * 消息在会话中定向发送给指定用户
      */
     public String[] toUsers;
+    //消息内容
     public MessageContent content;
     public MessageDirection direction;
     public MessageStatus status;

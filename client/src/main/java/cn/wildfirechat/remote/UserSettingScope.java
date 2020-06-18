@@ -7,6 +7,7 @@ public interface UserSettingScope {
     //不能直接使用，调用setConversation:top:方法会使用到此值。
     int ConversationTop = 3;
     int HiddenNotificationDetail = 4;
+    //群组昵称
     int GroupHideNickname = 5;
     int FavoriteGroup = 6;
     //不能直接使用，协议栈内会使用此值

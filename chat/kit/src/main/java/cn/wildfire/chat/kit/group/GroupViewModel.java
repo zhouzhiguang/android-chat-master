@@ -142,6 +142,7 @@ public class GroupViewModel extends ViewModel implements OnGroupInfoUpdateListen
                 ChatManager.Instance().uploadMediaFile(groupPortrait, MessageContentMediaType.PORTRAIT.getValue(), new UploadMediaCallback() {
                     @Override
                     public void onSuccess(String result) {
+
                         ChatManager.Instance().createGroup(null, finalGroupName, result, GroupInfo.GroupType.Restricted, selectedIds, lines, notifyMsg, new GeneralCallback2() {
                             @Override
                             public void onSuccess(String groupId) {
@@ -404,6 +405,7 @@ public class GroupViewModel extends ViewModel implements OnGroupInfoUpdateListen
         return mutedIds;
 
     }
+
 
     private List<UIUserInfo> managerMemberToUIUserInfo(String groupId, List<GroupMember> members) {
         if (members == null || members.isEmpty()) {

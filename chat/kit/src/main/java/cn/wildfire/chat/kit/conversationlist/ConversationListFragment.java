@@ -52,6 +52,7 @@ public class ConversationListFragment extends ProgressFragment {
     protected void afterViews(View view) {
         recyclerView = view.findViewById(R.id.recyclerView);
         init();
+
     }
 
     @Override

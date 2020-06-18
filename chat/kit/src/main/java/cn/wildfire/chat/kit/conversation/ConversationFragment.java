@@ -230,6 +230,7 @@ public class ConversationFragment extends Fragment implements
         }
     };
 
+    //回话被移除监听
     private Observer<Conversation> clearConversationMessageObserver = new Observer<Conversation>() {
         @Override
         public void onChanged(Conversation conversation) {
@@ -257,6 +258,14 @@ public class ConversationFragment extends Fragment implements
     };
 
     private void initGroupObservers() {
+        groupMembersUpdateLiveDataObserver=new  Observer<List<GroupMember>>(){
+
+            @Override
+            public void onChanged(List<GroupMember> groupMembers) {
+
+            }
+        };
+
         groupMembersUpdateLiveDataObserver = groupMembers -> {
             if (groupMembers == null || groupInfo == null) {
                 return;
@@ -285,7 +294,7 @@ public class ConversationFragment extends Fragment implements
             }
         };
 
-
+        //群组成员总会被通知
         groupViewModel.groupInfoUpdateLiveData().observeForever(groupInfosUpdateLiveDataObserver);
         groupViewModel.groupMembersUpdateLiveData().observeForever(groupMembersUpdateLiveDataObserver);
     }
@@ -404,7 +413,13 @@ public class ConversationFragment extends Fragment implements
 
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
         userViewModel.userInfoLiveData().observeForever(userInfoUpdateLiveDataObserver);
+        settingUpdateLiveDataObserver=new  Observer<Object>(){
 
+            @Override
+            public void onChanged(Object o) {
+
+            }
+        };
         settingUpdateLiveDataObserver = o -> {
             boolean show = "1".equals(userViewModel.getUserSetting(UserSettingScope.GroupHideNickname, groupInfo.target));
             if (showGroupMemberName != show) {
@@ -452,6 +467,7 @@ public class ConversationFragment extends Fragment implements
             adapter.setReadEntries(ChatManager.Instance().getConversationRead(conversation));
             messages.observe(this, uiMessages -> {
                 swipeRefreshLayout.setRefreshing(false);
+                LogUtils.e("ConversationFragment查看消息message" + uiMessages.toString());
                 adapter.setMessages(uiMessages);
                 adapter.notifyDataSetChanged();
 
@@ -714,14 +730,17 @@ public class ConversationFragment extends Fragment implements
     @Override
     public void onKeyboardShown() {
         inputPanel.onKeyboardShown();
+        LogUtils.i("键盘弹起回调");
         recyclerView.scrollToPosition(adapter.getItemCount() - 1);
     }
 
     @Override
     public void onKeyboardHidden() {
+
         inputPanel.onKeyboardHidden();
     }
 
+    @SuppressLint("FragmentLiveDataObserve")
     private void reloadMessage() {
         conversationViewModel.getMessages(conversation, channelPrivateChatUser).observe(this, uiMessages -> {
             adapter.setMessages(uiMessages);
@@ -809,6 +828,8 @@ public class ConversationFragment extends Fragment implements
     @Override
     public void onInputPanelCollapsed() {
         // do nothing
+        LogUtils.e("输入🍞");
+
     }
 
     public void toggleMultiMessageMode(UiMessage message) {
@@ -832,6 +853,7 @@ public class ConversationFragment extends Fragment implements
         inputPanel.setInputText(text);
     }
 
+    //多选消息删除按钮
     private void setupMultiMessageAction() {
         multiMessageActionContainerLinearLayout.removeAllViews();
         List<MultiMessageAction> actions = MultiMessageActionManager.getInstance().getConversationActions(conversation);

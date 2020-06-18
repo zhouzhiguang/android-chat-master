@@ -143,6 +143,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
     private boolean logined;
     private String userId;
     private String clientId;
+    //为服务端和客户端通信
     private RemoteCallbackList<IOnReceiveMessageListener> onReceiveMessageListeners = new WfcRemoteCallbackList<>();
     private RemoteCallbackList<IOnConnectionStatusChangeListener> onConnectionStatusChangeListenes = new WfcRemoteCallbackList<>();
     private RemoteCallbackList<IOnFriendUpdateListener> onFriendUpdateListenerRemoteCallbackList = new WfcRemoteCallbackList<>();
@@ -259,6 +260,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
 
         @Override
         public void onNetworkChange() {
+
             BaseEvent.onNetworkChange();
         }
 
@@ -379,6 +381,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
             ProtoLogic.sendMessageEx(msg.messageId, expireDuration, new SendMessageCallback(callback));
         }
 
+        //发送消息接口
         @Override
         public void send(cn.wildfirechat.message.Message msg, final ISendMessageCallback callback, int expireDuration) throws RemoteException {
 
@@ -1931,6 +1934,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         return out;
     }
 
+    //消失转换
     private cn.wildfirechat.message.Message convertProtoMessage(ProtoMessage protoMessage) {
         if (protoMessage == null || TextUtils.isEmpty(protoMessage.getTarget())) {
             return null;
@@ -1985,6 +1989,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
 
     @Override
     public boolean onUnbind(Intent intent) {
+
         return super.onUnbind(intent);
     }
 
@@ -2046,6 +2051,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         if (mConnectionReceiver != null) {
             unregisterReceiver(mConnectionReceiver);
             mConnectionReceiver = null;
+
         }
     }
 
@@ -2229,6 +2235,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
 
     @Override
     public void onRecallMessage(long messageUid) {
+        //接收到消息利用接口发送数据出去
         handler.post(() -> {
             int receiverCount = onReceiveMessageListeners.beginBroadcast();
             IOnReceiveMessageListener listener;
@@ -2281,6 +2288,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         });
     }
 
+    //消息已读
     @Override
     public void onUserReadedMessage(List<ProtoReadEntry> list) {
         handler.post(() -> {
@@ -2308,7 +2316,9 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         });
     }
 
+    //接收到想消息转换
     private void onReceiveMessageInternal(ProtoMessage[] protoMessages) {
+        //获取已经监听的数量
         int receiverCount = onReceiveMessageListeners.beginBroadcast();
         IOnReceiveMessageListener listener;
         while (receiverCount > 0) {
@@ -2332,6 +2342,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
 
     public final static int MAX_IPC_SIZE = 900 * 1024;
 
+    //服务里面接收到消失了--------------------------------------------------------------------
     @Override
     public void onReceiveMessage(List<ProtoMessage> messages, boolean hasMore) {
         if (mConnectionStatus == ConnectionStatusReceiveing && hasMore) {
@@ -2577,5 +2588,13 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
 
         List<Message> messages;
         int index;
+
+        @Override
+        public String toString() {
+            return "SafeIPCMessageEntry{" +
+                    "messages=" + messages +
+                    ", index=" + index +
+                    '}';
+        }
     }
 }

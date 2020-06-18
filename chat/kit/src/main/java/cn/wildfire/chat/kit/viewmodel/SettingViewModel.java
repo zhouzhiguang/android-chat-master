@@ -37,6 +37,7 @@ public class SettingViewModel extends ViewModel implements OnSettingUpdateListen
         ChatManager.Instance().setUserSetting(scope, key, value, new GeneralCallback() {
             @Override
             public void onSuccess() {
+
                 result.setValue(new OperateResult<>(0));
             }
 

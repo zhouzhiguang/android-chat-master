@@ -66,4 +66,11 @@ public class TipNotificationContent extends NotificationMessageContent {
             return new TipNotificationContent[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "TipNotificationContent{" +
+                "tip='" + tip + '\'' +
+                "} " + super.toString();
+    }
 }

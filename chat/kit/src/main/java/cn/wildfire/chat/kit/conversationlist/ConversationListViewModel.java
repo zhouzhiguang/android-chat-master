@@ -56,7 +56,9 @@ public class ConversationListViewModel extends ViewModel implements OnReceiveMes
         ChatManager.Instance().addDeleteMessageListener(this);
         ChatManager.Instance().addClearMessageListener(this);
         ChatManager.Instance().addRemoveConversationListener(this);
+
     }
+
 
     @Override
     protected void onCleared() {

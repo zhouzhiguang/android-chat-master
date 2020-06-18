@@ -27,6 +27,7 @@ import cn.wildfire.chat.kit.channel.ChannelViewModel;
 import cn.wildfire.chat.kit.conversationlist.ConversationListViewModel;
 import cn.wildfire.chat.kit.conversationlist.ConversationListViewModelFactory;
 import cn.wildfire.chat.kit.qrcode.QRCodeActivity;
+import cn.wildfire.chat.kit.viewmodel.SharedViewModel;
 import cn.wildfire.chat.kit.widget.OptionItemView;
 import cn.wildfirechat.chat.R;
 import cn.wildfirechat.model.ChannelInfo;
@@ -148,6 +149,8 @@ public class ChannelConversationInfoFragment extends Fragment implements Compoun
         ConversationListViewModel conversationListViewModel = ViewModelProviders
                 .of(this, new ConversationListViewModelFactory(Arrays.asList(Conversation.ConversationType.Single, Conversation.ConversationType.Group, Conversation.ConversationType.Channel), Arrays.asList(0)))
                 .get(ConversationListViewModel.class);
+        //kotlin的用法
+        // val model = ViewModelProviders.of(activity!!, ConversationListViewModel.SharedViewModelFactory("anriku")).get(SharedViewModel::class.java)
         conversationListViewModel.setConversationTop(conversationInfo, top);
     }
 

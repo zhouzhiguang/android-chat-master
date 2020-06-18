@@ -53,4 +53,13 @@ public abstract class MediaMessageContent extends MessageContent {
         int tmpMediaType = in.readInt();
         this.mediaType = tmpMediaType == -1 ? null : MessageContentMediaType.values()[tmpMediaType];
     }
+
+    @Override
+    public String toString() {
+        return "MediaMessageContent{" +
+                "localPath='" + localPath + '\'' +
+                ", remoteUrl='" + remoteUrl + '\'' +
+                ", mediaType=" + mediaType +
+                "} " + super.toString();
+    }
 }

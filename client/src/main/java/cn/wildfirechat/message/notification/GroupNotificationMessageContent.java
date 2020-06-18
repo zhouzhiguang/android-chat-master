@@ -25,5 +25,11 @@ public abstract class GroupNotificationMessageContent extends NotificationMessag
         this.groupId = in.readString();
     }
 
+    @Override
+    public String toString() {
+        return "GroupNotificationMessageContent{" +
+                "groupId='" + groupId + '\'' +
+                "} " + super.toString();
+    }
 }
 

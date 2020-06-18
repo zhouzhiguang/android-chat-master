@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 import cn.wildfirechat.message.core.ContentTag;
 import cn.wildfirechat.message.core.MessageContentType;
@@ -173,4 +174,15 @@ public class ImageMessageContent extends MediaMessageContent {
             return new ImageMessageContent[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "ImageMessageContent{" +
+                "thumbnail=" + thumbnail +
+                ", thumbnailBytes=" + Arrays.toString(thumbnailBytes) +
+                ", imageWidth=" + imageWidth +
+                ", imageHeight=" + imageHeight +
+                ", thumbPara='" + thumbPara + '\'' +
+                "} " + super.toString();
+    }
 }
