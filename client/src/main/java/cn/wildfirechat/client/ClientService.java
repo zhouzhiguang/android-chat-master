@@ -2270,6 +2270,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         });
     }
 
+    //收到消息回执
     @Override
     public void onUserReceivedMessage(Map<String, Long> map) {
         handler.post(() -> {
@@ -2351,7 +2352,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         if (messages.isEmpty()) {
             return;
         }
-        LogUtils.e("服务接受到消息：" + messages);
+        LogUtils.e("服务接受到消息onReceiveMessage：" + messages);
         handler.post(() -> onReceiveMessageInternal(messages.toArray(new ProtoMessage[0])));
     }
 
@@ -2537,6 +2538,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
             int startIndex = 0;
             do {
                 entry = buildSafeIPCMessages(protoMessages, startIndex, before);
+                LogUtils.e("服务器数据源什么情况：" + entry.messages);
                 callback.onSuccess(entry.messages, entry.messages.size() > 0 && startIndex != protoMessages.length - 1);
                 startIndex = entry.index + 1;
             } while (entry.index > 0 && entry.index < protoMessages.length - 1);

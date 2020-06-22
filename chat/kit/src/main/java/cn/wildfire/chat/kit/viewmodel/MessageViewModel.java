@@ -255,7 +255,8 @@ public class MessageViewModel extends ViewModel implements OnReceiveMessageListe
         ChatManager.Instance().setConversationSilent(conversation, silent);
     }
 
-    public void sendImgMsg(Conversation conversation, Uri imageFileThumbUri, Uri imageFileSourceUri) {
+    //发送图片
+    public void sendImgMsg(Conversation conversation, Uri imageFileSourceUri) {
         ImageMessageContent imgContent = new ImageMessageContent(imageFileSourceUri.getEncodedPath());
         String thumbParam = ChatManager.Instance().getImageThumbPara();
         if (!TextUtils.isEmpty(thumbParam)) {
@@ -272,7 +273,7 @@ public class MessageViewModel extends ViewModel implements OnReceiveMessageListe
 //        Uri imageFileThumbUri = Uri.fromFile(imageFileThumb);
         Uri imageFileSourceUri = Uri.parse(Uri.decode(imageFileSource.getAbsolutePath()));
 //        Uri imageFileSourceUri = Uri.fromFile(imageFileSource);
-        sendImgMsg(conversation, imageFileThumbUri, imageFileSourceUri);
+        sendImgMsg(conversation, imageFileSourceUri);
 
     }
 

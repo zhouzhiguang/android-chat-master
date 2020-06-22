@@ -14,6 +14,7 @@ public class GroupMember implements Parcelable {
         Manager(1),
         Owner(2),
         Muted(3),
+        //删除了
         Removed(4);
 
         private int value;

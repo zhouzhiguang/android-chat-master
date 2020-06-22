@@ -32,6 +32,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.apkfuns.logutils.LogUtils;
+import com.google.gson.Gson;
 
 import java.util.List;
 import java.util.Map;
@@ -258,7 +259,7 @@ public class ConversationFragment extends Fragment implements
     };
 
     private void initGroupObservers() {
-        groupMembersUpdateLiveDataObserver=new  Observer<List<GroupMember>>(){
+        groupMembersUpdateLiveDataObserver = new Observer<List<GroupMember>>() {
 
             @Override
             public void onChanged(List<GroupMember> groupMembers) {
@@ -413,7 +414,7 @@ public class ConversationFragment extends Fragment implements
 
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
         userViewModel.userInfoLiveData().observeForever(userInfoUpdateLiveDataObserver);
-        settingUpdateLiveDataObserver=new  Observer<Object>(){
+        settingUpdateLiveDataObserver = new Observer<Object>() {
 
             @Override
             public void onChanged(Object o) {
@@ -435,10 +436,15 @@ public class ConversationFragment extends Fragment implements
 
         //如果是群聊
         if (conversation.type == Conversation.ConversationType.Group) {
+            Gson gson = new Gson();
+            String json = gson.toJson(conversation);
+            LogUtils.e("看一下会话：" + conversation);
+            LogUtils.e("看一下会话JSON：" + conversation);
             groupViewModel = ViewModelProviders.of(this).get(GroupViewModel.class);
             initGroupObservers();
             groupViewModel.getGroupMembers(conversation.target, true);
             groupInfo = groupViewModel.getGroupInfo(conversation.target, true);
+            //获取当前用户在群里的身份成员信息
             groupMember = groupViewModel.getGroupMember(conversation.target, userViewModel.getUserId());
             showGroupMemberName = "1".equals(userViewModel.getUserSetting(UserSettingScope.GroupHideNickname, groupInfo.target));
             //跟新群聊状态有禁言套餐
@@ -449,7 +455,7 @@ public class ConversationFragment extends Fragment implements
         LogUtils.e("看看用户信息：" + userInfo.toString());
         inputPanel.setupConversation(conversation);
 
-        //聊天室
+        //除了聊天室
         if (conversation.type != Conversation.ConversationType.ChatRoom) {
 
             MutableLiveData<List<UiMessage>> messages;
@@ -743,6 +749,7 @@ public class ConversationFragment extends Fragment implements
     @SuppressLint("FragmentLiveDataObserve")
     private void reloadMessage() {
         conversationViewModel.getMessages(conversation, channelPrivateChatUser).observe(this, uiMessages -> {
+
             adapter.setMessages(uiMessages);
             adapter.notifyDataSetChanged();
         });

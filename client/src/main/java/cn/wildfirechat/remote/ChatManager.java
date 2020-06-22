@@ -439,7 +439,7 @@ public class ChatManager {
     }
 
     /**
-     * 群信息更新
+     * 我的所有群组群更新
      *
      * @param groupInfos
      */
@@ -4009,6 +4009,7 @@ public class ChatManager {
 
         try {
             groupMember = mClient.getGroupMember(groupId, memberId);
+            LogUtils.e("看一下："+ groupMember);
             groupMemberCache.put(key, groupMember);
             return groupMember;
         } catch (RemoteException e) {
