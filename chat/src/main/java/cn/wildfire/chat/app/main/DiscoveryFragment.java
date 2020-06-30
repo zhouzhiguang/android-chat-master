@@ -1,6 +1,5 @@
 package cn.wildfire.chat.app.main;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -81,7 +80,6 @@ public class DiscoveryFragment extends Fragment {
     }
 
 
-    @SuppressLint("FragmentLiveDataObserve")
     private void initMoment() {
         if (!WfcUIKit.getWfcUIKit().isSupportMoment()) {
             momentOptionItemView.setVisibility(View.GONE);

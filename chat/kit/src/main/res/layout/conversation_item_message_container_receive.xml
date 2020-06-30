@@ -121,7 +121,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="@dimen/item_margin_left_and_right"
             android:clickable="false"
-            android:visibility="visible" />
+            android:visibility="gone" />
     </LinearLayout>
 
 </cn.wildfire.chat.kit.conversation.message.MessageItemView>

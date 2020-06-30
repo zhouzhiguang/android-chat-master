@@ -104,12 +104,4 @@ public class TransferGroupOwnerNotificationContent extends GroupNotificationMess
             return new TransferGroupOwnerNotificationContent[size];
         }
     };
-
-    @Override
-    public String toString() {
-        return "TransferGroupOwnerNotificationContent{" +
-                "operator='" + operator + '\'' +
-                ", newOwner='" + newOwner + '\'' +
-                "} " + super.toString();
-    }
 }

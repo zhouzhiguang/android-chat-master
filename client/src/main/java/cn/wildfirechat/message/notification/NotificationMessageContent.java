@@ -7,7 +7,6 @@ import cn.wildfirechat.message.MessageContent;
 
 /**
  * Created by heavyrainlee on 19/12/2017.
- * 通知类
  */
 
 
@@ -44,12 +43,5 @@ public abstract class NotificationMessageContent extends MessageContent {
     protected NotificationMessageContent(Parcel in) {
         super(in);
         this.fromSelf = in.readByte() != 0;
-    }
-
-    @Override
-    public String toString() {
-        return "NotificationMessageContent{" +
-                "fromSelf=" + fromSelf +
-                "} " + super.toString();
     }
 }

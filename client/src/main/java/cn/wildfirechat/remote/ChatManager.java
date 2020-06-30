@@ -24,8 +24,6 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
-import com.apkfuns.logutils.LogUtils;
-
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
@@ -45,8 +43,11 @@ import cn.wildfirechat.UserSource;
 import cn.wildfirechat.client.ClientService;
 import cn.wildfirechat.client.ICreateChannelCallback;
 import cn.wildfirechat.client.IGeneralCallback;
+import cn.wildfirechat.client.IGetGroupCallback;
+import cn.wildfirechat.client.IGetGroupMemberCallback;
 import cn.wildfirechat.client.IGetMessageCallback;
 import cn.wildfirechat.client.IGetRemoteMessageCallback;
+import cn.wildfirechat.client.IGetUserCallback;
 import cn.wildfirechat.client.IOnChannelInfoUpdateListener;
 import cn.wildfirechat.client.IOnConnectionStatusChangeListener;
 import cn.wildfirechat.client.IOnFriendUpdateListener;
@@ -94,7 +95,7 @@ import cn.wildfirechat.model.UserInfo;
 import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
- * 聊天管理类
+ * Created by WF Chat on 2017/12/11.
  */
 
 public class ChatManager {
@@ -102,7 +103,6 @@ public class ChatManager {
 
     private String SERVER_HOST;
 
-    //通过client 可以调用服务里面的方法
     private static IRemoteClient mClient;
 
     private static ChatManager INST;
@@ -196,7 +196,6 @@ public class ChatManager {
 
     public static ChatManager Instance() throws NotInitializedExecption {
         if (INST == null) {
-
             throw new NotInitializedExecption();
         }
         return INST;
@@ -231,7 +230,6 @@ public class ChatManager {
                     return;
                 }
                 try {
-                    LogUtils.e("运行在前台");
                     mClient.setForeground(1);
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -246,7 +244,6 @@ public class ChatManager {
                     return;
                 }
                 try {
-                    LogUtils.e("运行在后台");
                     mClient.setForeground(0);
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -273,7 +270,6 @@ public class ChatManager {
      * @param userSource 用户信息源
      */
     public void setUserSource(UserSource userSource) {
-
         this.userSource = userSource;
     }
 
@@ -353,7 +349,7 @@ public class ChatManager {
     }
 
     /**
-     * 消息被撤回
+     * 消息被通过server api 删除
      *
      * @param messageUid
      */
@@ -379,7 +375,6 @@ public class ChatManager {
             OnReceiveMessageListener listener;
             while (iterator.hasNext()) {
                 listener = iterator.next();
-                LogUtils.e("ChatManager类接收消息：" + messages.toString());
                 listener.onReceiveMessage(messages, hasMore);
             }
 
@@ -388,10 +383,9 @@ public class ChatManager {
                 return;
             }
             for (Message message : messages) {
-                //下面是退群 被人移除群聊 要
                 if ((message.content instanceof QuitGroupNotificationContent && ((QuitGroupNotificationContent) message.content).operator.equals(getUserId()))
-                        || (message.content instanceof KickoffGroupMemberNotificationContent && ((KickoffGroupMemberNotificationContent) message.content).kickedMembers.contains(getUserId()))
-                        || message.content instanceof DismissGroupNotificationContent) {
+                    || (message.content instanceof KickoffGroupMemberNotificationContent && ((KickoffGroupMemberNotificationContent) message.content).kickedMembers.contains(getUserId()))
+                    || message.content instanceof DismissGroupNotificationContent) {
                     for (OnRemoveConversationListener l : removeConversationListeners) {
                         l.onConversationRemove(message.conversation);
                     }
@@ -440,7 +434,7 @@ public class ChatManager {
     }
 
     /**
-     * 我的所有群组群更新
+     * 群信息更新
      *
      * @param groupInfos
      */
@@ -493,7 +487,6 @@ public class ChatManager {
         });
     }
 
-    //设置事件分发
     private void onSettingUpdated() {
         mainHandler.post(() -> {
             for (OnSettingUpdateListener listener : settingUpdateListeners) {
@@ -512,8 +505,6 @@ public class ChatManager {
 
     /**
      * 添加新消息监听, 记得调用{@link #removeOnReceiveMessageListener(OnReceiveMessageListener)}删除监听
-     * <p>
-     * 为需要监听接收的类添加接收消失监听
      *
      * @param listener
      */
@@ -697,7 +688,7 @@ public class ChatManager {
 
         String imei = null;
         try (
-                RandomAccessFile fw = new RandomAccessFile(gContext.getFilesDir().getAbsoluteFile() + "/.wfcClientId", "rw");
+            RandomAccessFile fw = new RandomAccessFile(gContext.getFilesDir().getAbsoluteFile() + "/.wfcClientId", "rw");
         ) {
 
             FileChannel chan = fw.getChannel();
@@ -784,7 +775,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.modifyChannelInfo(channelId, modifyType.ordinal(), newValue, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.modifyChannelInfo(channelId, modifyType.ordinal(), newValue, new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -925,7 +916,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.listenChannel(channelId, listen, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.listenChannel(channelId, listen, new IGeneralCallback.Stub() {
 
                 @Override
                 public void onSuccess() throws RemoteException {
@@ -972,7 +963,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.destoryChannel(channelId, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.destoryChannel(channelId, new IGeneralCallback.Stub() {
 
                 @Override
                 public void onSuccess() throws RemoteException {
@@ -1414,9 +1405,9 @@ public class ChatManager {
             try {
                 SharedPreferences sp = gContext.getSharedPreferences("wildfirechat.config", Context.MODE_PRIVATE);
                 sp.edit()
-                        .putString("userId", userId)
-                        .putString("token", token)
-                        .commit();
+                    .putString("userId", userId)
+                    .putString("token", token)
+                    .commit();
                 return mClient.connect(this.userId, this.token);
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -1488,7 +1479,6 @@ public class ChatManager {
 
                 @Override
                 public void onProgress(long uploaded, long total) throws RemoteException {
-
                 }
 
                 @Override
@@ -1673,7 +1663,7 @@ public class ChatManager {
      */
     public void recallMessage(final Message msg, final GeneralCallback callback) {
         try {
-            mClient.recall(msg.messageUid, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.recall(msg.messageUid, new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     mainHandler.post(() -> {
@@ -1740,7 +1730,7 @@ public class ChatManager {
         }
 
         if (conversationTypes == null || conversationTypes.size() == 0 ||
-                lines == null || lines.size() == 0) {
+            lines == null || lines.size() == 0) {
             Log.e(TAG, "Invalid conversation type and lines");
             return new ArrayList<>();
         }
@@ -1756,9 +1746,7 @@ public class ChatManager {
         }
 
         try {
-            List<ConversationInfo> infos = mClient.getConversationList(intypes, inlines);
-            LogUtils.e("ChatManager会话信息：" + infos.toString());
-            return infos;
+            return mClient.getConversationList(intypes, inlines);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -1795,7 +1783,7 @@ public class ChatManager {
      * @param fromIndex    消息起始id(messageId)
      * @param before       true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
      * @param count        获取消息条数
-     * @param withUser     只有会话类型为{@link cn.wildfirechat.model.Conversation.ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
+     * @param withUser     只有会话类型为{@link Conversation.ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
      * @return 由于ipc大小限制，本接口获取到的消息列表可能不完整，请使用异步获取
      */
     @Deprecated
@@ -1820,8 +1808,8 @@ public class ChatManager {
         }
 
         if (conversationTypes == null || conversationTypes.size() == 0 ||
-                lines == null || lines.size() == 0 ||
-                contentTypes == null || contentTypes.size() == 0) {
+            lines == null || lines.size() == 0 ||
+            contentTypes == null || contentTypes.size() == 0) {
             Log.e(TAG, "Invalid conversation type or lines or contentType");
             return null;
         }
@@ -1847,7 +1835,7 @@ public class ChatManager {
         }
 
         if (conversationTypes == null || conversationTypes.size() == 0 ||
-                lines == null || lines.size() == 0) {
+            lines == null || lines.size() == 0) {
             Log.e(TAG, "Invalid conversation type or lines");
             return null;
         }
@@ -1868,11 +1856,11 @@ public class ChatManager {
     /**
      * 获取会话消息
      *
-     * @param conversation 会话
+     * @param conversation
      * @param fromIndex    消息起始id(messageId)
      * @param before       true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
      * @param count        获取消息条数
-     * @param withUser     只有会话类型为{@link cn.wildfirechat.model.Conversation.ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
+     * @param withUser     只有会话类型为{@link Conversation.ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
      * @param callback     消息回调，当消息比较多，或者消息体比较大时，可能会回调多次
      */
     public void getMessages(Conversation conversation, long fromIndex, boolean before, int count, String withUser, GetMessageCallback callback) {
@@ -1910,7 +1898,7 @@ public class ChatManager {
      * @param fromIndex    消息起始id(messageId)
      * @param before       true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
      * @param count        获取消息条数
-     * @param withUser     只有会话类型为{@link cn.wildfirechat.model.Conversation.ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
+     * @param withUser     只有会话类型为{@link Conversation.ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
      * @param callback     消息回调，当消息比较多，或者消息体比较大时，可能会回调多次
      */
     public void getMessages(Conversation conversation, List<Integer> contentTypes, long fromIndex, boolean before, int count, String withUser, GetMessageCallback callback) {
@@ -1949,7 +1937,7 @@ public class ChatManager {
      * @param fromIndex         消息起始id(messageId)
      * @param before            true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
      * @param count             获取消息条数
-     * @param withUser          只有会话类型为{@link cn.wildfirechat.model.Conversation.ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
+     * @param withUser          只有会话类型为{@link Conversation.ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
      * @param callback          消息回调，当消息比较多，或者消息体比较大时，可能会回调多次
      */
     public void getMessagesEx(List<Conversation.ConversationType> conversationTypes, List<Integer> lines, List<Integer> contentTypes, long fromIndex, boolean before, int count, String withUser, GetMessageCallback callback) {
@@ -1963,8 +1951,8 @@ public class ChatManager {
         }
 
         if (conversationTypes == null || conversationTypes.size() == 0 ||
-                lines == null || lines.size() == 0 ||
-                contentTypes == null || contentTypes.size() == 0) {
+            lines == null || lines.size() == 0 ||
+            contentTypes == null || contentTypes.size() == 0) {
             Log.e(TAG, "Invalid conversation type or lines or contentType");
             callback.onFail(ErrorCode.INVALID_PARAMETER);
             return;
@@ -2003,7 +1991,7 @@ public class ChatManager {
      * @param fromIndex         消息起始id(messageId)
      * @param before            true, 获取fromIndex之前的消息，即更旧的消息；false，获取fromIndex之后的消息，即更新的消息。都不包含fromIndex对应的消息
      * @param count             获取消息条数
-     * @param withUser          只有会话类型为{@link cn.wildfirechat.model.Conversation.ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
+     * @param withUser          只有会话类型为{@link Conversation.ConversationType#Channel}时生效, channel主用来查询和某个用户的所有消息
      * @param callback          消息回调，当消息比较多，或者消息体比较大时，可能会回调多次
      */
     public void getMessagesEx2(List<Conversation.ConversationType> conversationTypes, List<Integer> lines, MessageStatus messageStatus, long fromIndex, boolean before, int count, String withUser, GetMessageCallback callback) {
@@ -2018,7 +2006,7 @@ public class ChatManager {
         }
 
         if (conversationTypes == null || conversationTypes.size() == 0 ||
-                lines == null || lines.size() == 0) {
+            lines == null || lines.size() == 0) {
             Log.e(TAG, "Invalid conversation type or lines");
             callback.onFail(ErrorCode.INVALID_PARAMETER);
             return;
@@ -2049,7 +2037,7 @@ public class ChatManager {
 
 
     /**
-     * 获取远端服务器历史消息
+     * 获取远程历史消息
      *
      * @param conversation    会话
      * @param beforeMessageId 起始消息的消息id
@@ -2749,7 +2737,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.removeFriend(userId, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.removeFriend(userId, new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -2796,7 +2784,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.sendFriendRequest(userId, reason, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.sendFriendRequest(userId, reason, new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -2844,7 +2832,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.handleFriendRequest(userId, accept, extra, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.handleFriendRequest(userId, accept, extra, new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -2930,7 +2918,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.setBlackList(userId, isBlacked, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.setBlackList(userId, isBlacked, new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -2976,7 +2964,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.deleteFriend(userId, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.deleteFriend(userId, new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -3034,6 +3022,30 @@ public class ChatManager {
         }
     }
 
+    public void getGroupInfo(String groupId, boolean refresh, GetGroupInfoCallback callback) {
+        if (!checkRemoteService()) {
+            return;
+        }
+
+        try {
+            mClient.getGroupInfoEx(groupId, refresh, new IGetGroupCallback.Stub() {
+                @Override
+                public void onSuccess(GroupInfo userInfo) throws RemoteException {
+                    callback.onSuccess(userInfo);
+                }
+
+                @Override
+                public void onFailure(int errorCode) throws RemoteException {
+                    callback.onFail(errorCode);
+                }
+            });
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+
+        }
+    }
+
     /**
      * 加入聊天室
      *
@@ -3046,7 +3058,7 @@ public class ChatManager {
             return;
         }
         try {
-            mClient.joinChatRoom(chatRoomId, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.joinChatRoom(chatRoomId, new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     mainHandler.post(() -> callback.onSuccess());
@@ -3074,7 +3086,7 @@ public class ChatManager {
             return;
         }
         try {
-            mClient.quitChatRoom(chatRoomId, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.quitChatRoom(chatRoomId, new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -3175,7 +3187,7 @@ public class ChatManager {
     }
 
     /**
-     * 获取用户信息 用于获取头像名字等
+     * 获取用户信息
      *
      * @param userId
      * @param refresh
@@ -3285,6 +3297,30 @@ public class ChatManager {
         return null;
     }
 
+    public void getUserInfo(String userId, boolean refresh, GetUserInfoCallback callback) {
+        if (!checkRemoteService()) {
+            if (callback != null) {
+                callback.onFail(ErrorCode.SERVICE_DIED);
+            }
+            return;
+        }
+        try {
+            mClient.getUserInfoEx(userId, refresh, new IGetUserCallback.Stub() {
+                @Override
+                public void onSuccess(UserInfo userInfo) throws RemoteException {
+                    callback.onSuccess(userInfo);
+                }
+
+                @Override
+                public void onFailure(int errorCode) throws RemoteException {
+                    callback.onFail(errorCode);
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 上传媒体文件
      *
@@ -3339,8 +3375,6 @@ public class ChatManager {
 
 
     /**
-     * 暂时用不了
-     *
      * @param data      不能超过1M，为了安全，实际只有900K
      * @param mediaType 媒体类型，可选值参考{@link cn.wildfirechat.message.MessageContentMediaType}
      * @param callback
@@ -3416,7 +3450,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.modifyMyInfo(values, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.modifyMyInfo(values, new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -3656,7 +3690,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.addGroupMembers(groupId, memberIds, inlines, content2Payload(notifyMsg), new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.addGroupMembers(groupId, memberIds, inlines, content2Payload(notifyMsg), new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -3719,7 +3753,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.removeGroupMembers(groupId, memberIds, inlines, content2Payload(notifyMsg), new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.removeGroupMembers(groupId, memberIds, inlines, content2Payload(notifyMsg), new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -3771,7 +3805,7 @@ public class ChatManager {
             inlines[j] = lines.get(j);
         }
         try {
-            mClient.quitGroup(groupId, inlines, content2Payload(notifyMsg), new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.quitGroup(groupId, inlines, content2Payload(notifyMsg), new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -3824,7 +3858,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.dismissGroup(groupId, inlines, content2Payload(notifyMsg), new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.dismissGroup(groupId, inlines, content2Payload(notifyMsg), new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -3878,7 +3912,7 @@ public class ChatManager {
             inlines[j] = lines.get(j);
         }
         try {
-            mClient.modifyGroupInfo(groupId, modifyType.ordinal(), newValue, inlines, content2Payload(notifyMsg), new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.modifyGroupInfo(groupId, modifyType.ordinal(), newValue, inlines, content2Payload(notifyMsg), new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     GroupInfo groupInfo = mClient.getGroupInfo(groupId, false);
@@ -3933,7 +3967,7 @@ public class ChatManager {
             inlines[j] = lines.get(j);
         }
         try {
-            mClient.modifyGroupAlias(groupId, alias, inlines, content2Payload(notifyMsg), new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.modifyGroupAlias(groupId, alias, inlines, content2Payload(notifyMsg), new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -3986,6 +4020,28 @@ public class ChatManager {
         }
     }
 
+    public void getGroupMembers(String groupId, boolean forceUpdate, GetGroupMembersCallback callback) {
+        if (!checkRemoteService()) {
+            return;
+        }
+
+        try {
+            mClient.getGroupMemberEx(groupId, forceUpdate, new IGetGroupMemberCallback.Stub() {
+                @Override
+                public void onSuccess(List<GroupMember> groupMembers) throws RemoteException {
+                    callback.onSuccess(groupMembers);
+                }
+
+                @Override
+                public void onFailure(int errorCode) throws RemoteException {
+                    callback.onFail(errorCode);
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     private String groupMemberCacheKey(String groupId, String memberId) {
         return memberId + "@" + groupId;
     }
@@ -4013,7 +4069,6 @@ public class ChatManager {
 
         try {
             groupMember = mClient.getGroupMember(groupId, memberId);
-            LogUtils.e("看一下：" + groupMember);
             groupMemberCache.put(key, groupMember);
             return groupMember;
         } catch (RemoteException e) {
@@ -4044,7 +4099,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.transferGroup(groupId, newOwner, inlines, content2Payload(notifyMsg), new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.transferGroup(groupId, newOwner, inlines, content2Payload(notifyMsg), new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -4099,7 +4154,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.setGroupManager(groupId, isSet, memberIds, inlines, content2Payload(notifyMsg), new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.setGroupManager(groupId, isSet, memberIds, inlines, content2Payload(notifyMsg), new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -4145,7 +4200,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.muteGroupMember(groupId, isSet, memberIds, inlines, content2Payload(notifyMsg), new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.muteGroupMember(groupId, isSet, memberIds, inlines, content2Payload(notifyMsg), new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -4300,7 +4355,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.setUserSetting(scope, key, value, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.setUserSetting(scope, key, value, new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -4473,7 +4528,7 @@ public class ChatManager {
     }
 
     /*
-      是否开启了已送达报告和已读报告功能
+    是否开启了已送达报告和已读报告功能
      */
     public boolean isReceiptEnabled() {
         if (!checkRemoteService()) {
@@ -4606,7 +4661,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.setUserSetting(UserSettingScope.GlobalSilent, "", isSlient ? "1" : "0", new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.setUserSetting(UserSettingScope.GlobalSilent, "", isSlient ? "1" : "0", new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -4659,7 +4714,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.setUserSetting(UserSettingScope.HiddenNotificationDetail, "", isHidden ? "1" : "0", new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.setUserSetting(UserSettingScope.HiddenNotificationDetail, "", isHidden ? "1" : "0", new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -4717,7 +4772,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.setUserSetting(UserSettingScope.DisableReceipt, "", enable ? "0" : "1", new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.setUserSetting(UserSettingScope.DisableReceipt, "", enable ? "0" : "1", new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     if (callback != null) {
@@ -4770,7 +4825,7 @@ public class ChatManager {
         }
 
         try {
-            mClient.kickoffPCClient(pcClientId, new cn.wildfirechat.client.IGeneralCallback.Stub() {
+            mClient.kickoffPCClient(pcClientId, new IGeneralCallback.Stub() {
                 @Override
                 public void onSuccess() throws RemoteException {
                     mainHandler.post(callback::onSuccess);
@@ -4865,18 +4920,14 @@ public class ChatManager {
                 }
 
                 mClient.setForeground(1);
-                //下面几个才是核心方法
                 mClient.setOnReceiveMessageListener(new IOnReceiveMessageListener.Stub() {
                     @Override
                     public void onReceive(List<Message> messages, boolean hasMore) throws RemoteException {
-                        LogUtils.e("ChatManager接受到服务消息：" + messages);
-                        LogUtils.e("ChatManager接受到服务的消息：" + hasMore);
                         onReceiveMessage(messages, hasMore);
                     }
 
                     @Override
                     public void onRecall(long messageUid) throws RemoteException {
-                        //消息被撤回
                         onRecallMessage(messageUid);
                     }
 
@@ -4887,7 +4938,6 @@ public class ChatManager {
 
                     @Override
                     public void onDelivered(Map deliveryMap) throws RemoteException {
-                        //消息已经送达
                         onMsgDelivered(deliveryMap);
                     }
 
@@ -4935,7 +4985,6 @@ public class ChatManager {
                 mClient.setOnSettingUpdateListener(new IOnSettingUpdateListener.Stub() {
                     @Override
                     public void onSettingUpdated() throws RemoteException {
-                        //设置跟新
                         ChatManager.this.onSettingUpdated();
                     }
                 });

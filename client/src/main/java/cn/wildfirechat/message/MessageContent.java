@@ -68,14 +68,4 @@ public abstract class MessageContent implements Parcelable {
         this.extra = in.readString();
         this.pushContent = in.readString();
     }
-
-    @Override
-    public String toString() {
-        return "MessageContent{" +
-                "mentionedType=" + mentionedType +
-                ", mentionedTargets=" + mentionedTargets +
-                ", extra='" + extra + '\'' +
-                ", pushContent='" + pushContent + '\'' +
-                '}';
-    }
 }

@@ -27,25 +27,12 @@ import cn.wildfire.chat.kit.channel.ChannelViewModel;
 import cn.wildfire.chat.kit.conversationlist.ConversationListViewModel;
 import cn.wildfire.chat.kit.conversationlist.ConversationListViewModelFactory;
 import cn.wildfire.chat.kit.qrcode.QRCodeActivity;
-import cn.wildfire.chat.kit.viewmodel.SharedViewModel;
 import cn.wildfire.chat.kit.widget.OptionItemView;
 import cn.wildfirechat.chat.R;
 import cn.wildfirechat.model.ChannelInfo;
 import cn.wildfirechat.model.Conversation;
 import cn.wildfirechat.model.ConversationInfo;
 
-/**
- * @ProjectName:
- * @Package: cn.wildfire.chat.kit.conversation
- * @ClassName: ChannelConversationInfoFragment
- * @Description: 频道信息
- * @Author: 作者名
- * @CreateDate: 2020/6/6 19:22
- * @UpdateUser: 更新者：
- * @UpdateDate: 2020/6/6 19:22
- * @UpdateRemark: 更新说明：
- * @Version: 1.0
- */
 public class ChannelConversationInfoFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
 
     // common
@@ -147,10 +134,8 @@ public class ChannelConversationInfoFragment extends Fragment implements Compoun
 
     private void stickTop(boolean top) {
         ConversationListViewModel conversationListViewModel = ViewModelProviders
-                .of(this, new ConversationListViewModelFactory(Arrays.asList(Conversation.ConversationType.Single, Conversation.ConversationType.Group, Conversation.ConversationType.Channel), Arrays.asList(0)))
-                .get(ConversationListViewModel.class);
-        //kotlin的用法
-        // val model = ViewModelProviders.of(activity!!, ConversationListViewModel.SharedViewModelFactory("anriku")).get(SharedViewModel::class.java)
+            .of(this, new ConversationListViewModelFactory(Arrays.asList(Conversation.ConversationType.Single, Conversation.ConversationType.Group, Conversation.ConversationType.Channel), Arrays.asList(0)))
+            .get(ConversationListViewModel.class);
         conversationListViewModel.setConversationTop(conversationInfo, top);
     }
 

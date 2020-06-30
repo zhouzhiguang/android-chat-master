@@ -20,9 +20,9 @@ public interface AppServiceProvider {
         void onUiFailure(int code, String msg);
     }
 
-    public void getGroupAnnouncement(String groupId, AppService.GetGroupAnnouncementCallback callback);
+    public void getGroupAnnouncement(String groupId, GetGroupAnnouncementCallback callback);
 
-    public void updateGroupAnnouncement(String groupId, String announcement, AppService.UpdateGroupAnnouncementCallback callback);
+    public void updateGroupAnnouncement(String groupId, String announcement, UpdateGroupAnnouncementCallback callback);
 
     /**
      * 前置条件是已经调过{@link cn.wildfirechat.remote.ChatManager#init(Application, String)}

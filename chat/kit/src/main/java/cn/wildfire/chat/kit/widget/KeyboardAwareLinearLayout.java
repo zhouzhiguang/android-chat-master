@@ -29,8 +29,6 @@ import android.view.View;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
 
-import com.apkfuns.logutils.LogUtils;
-
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
@@ -128,15 +126,15 @@ public class KeyboardAwareLinearLayout extends LinearLayoutCompat {
                 return insets.bottom;
             }
         } catch (NoSuchFieldException nsfe) {
-            Log.w(TAG, "field reflection error when measuring view inset", nsfe);
+//            Log.w(TAG, "field reflection error when measuring view inset", nsfe);
         } catch (IllegalAccessException iae) {
-            Log.w(TAG, "access reflection error when measuring view inset", iae);
+//            Log.w(TAG, "access reflection error when measuring view inset", iae);
         }
         return 0;
     }
 
     protected void onKeyboardOpen(int keyboardHeight) {
-        LogUtils.e(TAG + "事件起源onKeyboardOpen(" + keyboardHeight + ")");
+        Log.i(TAG, "onKeyboardOpen(" + keyboardHeight + ")");
         keyboardOpen = true;
 
         notifyShownListeners();

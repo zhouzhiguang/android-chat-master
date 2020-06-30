@@ -9,8 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.apkfuns.logutils.LogUtils;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,13 +28,12 @@ import cn.wildfirechat.model.PCOnlineInfo;
 import cn.wildfirechat.model.UserInfo;
 import cn.wildfirechat.remote.ChatManager;
 
-
 public class ConversationListFragment extends ProgressFragment {
     private RecyclerView recyclerView;
     private ConversationListAdapter adapter;
     private static final List<Conversation.ConversationType> types = Arrays.asList(Conversation.ConversationType.Single,
-            Conversation.ConversationType.Group,
-            Conversation.ConversationType.Channel);
+        Conversation.ConversationType.Group,
+        Conversation.ConversationType.Channel);
     private static final List<Integer> lines = Arrays.asList(0);
 
     private ConversationListViewModel conversationListViewModel;
@@ -52,7 +49,6 @@ public class ConversationListFragment extends ProgressFragment {
     protected void afterViews(View view) {
         recyclerView = view.findViewById(R.id.recyclerView);
         init();
-
     }
 
     @Override
@@ -72,12 +68,10 @@ public class ConversationListFragment extends ProgressFragment {
     private void init() {
         adapter = new ConversationListAdapter(this);
         conversationListViewModel = ViewModelProviders
-                .of(getActivity(), new ConversationListViewModelFactory(types, lines))
-                .get(ConversationListViewModel.class);
-        //添加数据监听
+            .of(getActivity(), new ConversationListViewModelFactory(types, lines))
+            .get(ConversationListViewModel.class);
         conversationListViewModel.conversationListLiveData().observe(this, conversationInfos -> {
             showContent();
-            LogUtils.e("更新数据了" + conversationInfos.size());
             adapter.setConversationInfos(conversationInfos);
         });
         layoutManager = new LinearLayoutManager(getActivity());

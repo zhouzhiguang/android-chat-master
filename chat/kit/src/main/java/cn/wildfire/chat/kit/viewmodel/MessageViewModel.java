@@ -7,8 +7,6 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.apkfuns.logutils.LogUtils;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -49,13 +47,13 @@ import cn.wildfirechat.remote.OnReceiveMessageListener;
 import cn.wildfirechat.remote.OnSendMessageListener;
 
 public class MessageViewModel extends ViewModel implements OnReceiveMessageListener,
-        OnSendMessageListener,
-        OnDeleteMessageListener,
-        OnRecallMessageListener,
-        OnMessageUpdateListener,
-        OnMessageDeliverListener,
-        OnMessageReadListener,
-        OnClearMessageListener {
+    OnSendMessageListener,
+    OnDeleteMessageListener,
+    OnRecallMessageListener,
+    OnMessageUpdateListener,
+    OnMessageDeliverListener,
+    OnMessageReadListener,
+    OnClearMessageListener {
     private MutableLiveData<UiMessage> messageLiveData;
     private MutableLiveData<UiMessage> messageUpdateLiveData;
     private MutableLiveData<UiMessage> messageRemovedLiveData;
@@ -150,7 +148,6 @@ public class MessageViewModel extends ViewModel implements OnReceiveMessageListe
     public void onRecallMessage(Message message) {
         if (message != null) {
             UiMessage uiMessage = new UiMessage(message);
-            LogUtils.e("MessageViewModel接收消息了撤回了：" + message);
             postMessageUpdate(uiMessage);
         }
     }
@@ -229,6 +226,10 @@ public class MessageViewModel extends ViewModel implements OnReceiveMessageListe
         AudioPlayManager.getInstance().stopPlay();
     }
 
+    public void sendMessage(Conversation conversation, List<String> toUsers, MessageContent content) {
+
+    }
+
     public void sendMessage(Conversation conversation, MessageContent content) {
         Message msg = new Message();
         msg.conversation = conversation;
@@ -255,14 +256,12 @@ public class MessageViewModel extends ViewModel implements OnReceiveMessageListe
         ChatManager.Instance().setConversationSilent(conversation, silent);
     }
 
-    //发送图片
-    public void sendImgMsg(Conversation conversation, Uri imageFileSourceUri) {
+    public void sendImgMsg(Conversation conversation, Uri imageFileThumbUri, Uri imageFileSourceUri) {
         ImageMessageContent imgContent = new ImageMessageContent(imageFileSourceUri.getEncodedPath());
         String thumbParam = ChatManager.Instance().getImageThumbPara();
         if (!TextUtils.isEmpty(thumbParam)) {
             imgContent.setThumbPara(ChatManager.Instance().getImageThumbPara());
         }
-        LogUtils.e("测试一下发送图片了："+imgContent.toString());
         sendMessage(conversation, imgContent);
     }
 
@@ -273,7 +272,7 @@ public class MessageViewModel extends ViewModel implements OnReceiveMessageListe
 //        Uri imageFileThumbUri = Uri.fromFile(imageFileThumb);
         Uri imageFileSourceUri = Uri.parse(Uri.decode(imageFileSource.getAbsolutePath()));
 //        Uri imageFileSourceUri = Uri.fromFile(imageFileSource);
-        sendImgMsg(conversation, imageFileSourceUri);
+        sendImgMsg(conversation, imageFileThumbUri, imageFileSourceUri);
 
     }
 
@@ -346,6 +345,7 @@ public class MessageViewModel extends ViewModel implements OnReceiveMessageListe
             }
         });
     }
+
     public File mediaMessageContentFile(UiMessage message) {
 
         String dir = null;

@@ -54,7 +54,7 @@ public class Conversation implements Parcelable {
     }
 
     public ConversationType type;
-    public String target;//目标
+    public String target;
     // 可以用来做自定义会话，区分不同业务线
     public int line;
 
@@ -105,7 +105,7 @@ public class Conversation implements Parcelable {
         this.line = in.readInt();
     }
 
-    public static final Parcelable.Creator<Conversation> CREATOR = new Parcelable.Creator<Conversation>() {
+    public static final Creator<Conversation> CREATOR = new Creator<Conversation>() {
         @Override
         public Conversation createFromParcel(Parcel source) {
             return new Conversation(source);
@@ -131,14 +131,5 @@ public class Conversation implements Parcelable {
             result = 31 * result + (element == null ? 0 : element.hashCode());
 
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Conversation{" +
-                "type=" + type +
-                ", target='" + target + '\'' +
-                ", line=" + line +
-                '}';
     }
 }

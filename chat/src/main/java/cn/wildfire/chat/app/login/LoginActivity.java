@@ -75,7 +75,7 @@ public class LoginActivity extends WfcBaseActivity {
                 .build();
         dialog.show();
 
-        AppService.Instance().smsLogin(account, password, new AppService.LoginCallback() {
+        AppService.Instance().namePwdLogin(account, password, new AppService.LoginCallback() {
             @Override
             public void onUiSuccess(LoginResult loginResult) {
                 if (isFinishing()) {

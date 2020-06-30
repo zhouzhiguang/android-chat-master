@@ -14,16 +14,6 @@ import cn.wildfirechat.model.Conversation;
 import cn.wildfirechat.model.ConversationInfo;
 import cn.wildfirechat.remote.ChatManager;
 
-/**
- * @ProjectName:
- * @Package: 聊天主类
- * @Author: 作者名
- * @CreateDate: 2020/6/9 16:04
- * @UpdateUser: 更新者：
- * @UpdateDate: 2020/6/9 16:04
- * @UpdateRemark: 更新说明：
- * @Version: 1.0
- */
 public class ConversationActivity extends WfcBaseActivity {
     private boolean isInitialized = false;
     private ConversationFragment conversationFragment;
@@ -130,7 +120,6 @@ public class ConversationActivity extends WfcBaseActivity {
         return buildConversationIntent(context, conversation, null, -1);
     }
 
-    //调用静态启用聊天
     public static Intent buildConversationIntent(Context context, Conversation conversation, String channelPrivateChatUser, long toFocusMessageId) {
         Intent intent = new Intent(context, ConversationActivity.class);
         intent.putExtra("conversation", conversation);

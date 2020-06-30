@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.apkfuns.logutils.LogUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +44,6 @@ public class ConversationViewModel extends ViewModel implements AppScopeViewMode
                         for (Message msg : messageList) {
                             messages.add(new UiMessage(msg));
                         }
-                        LogUtils.e("数据库多少条：" + messages.size());
                         result.postValue(messages);
                     } else {
                         ChatManager.Instance().getRemoteMessages(conversation, fromMessageUid, count, new GetRemoteMessageCallback() {
@@ -57,7 +54,6 @@ public class ConversationViewModel extends ViewModel implements AppScopeViewMode
                                     for (Message msg : messages) {
                                         msgs.add(new UiMessage(msg));
                                     }
-                                    LogUtils.e("服务器历史消息多少条：" + messages.size());
                                     result.postValue(msgs);
                                 } else {
                                     result.postValue(new ArrayList<UiMessage>());
@@ -129,7 +125,6 @@ public class ConversationViewModel extends ViewModel implements AppScopeViewMode
 
         return result;
     }
-
 
     public MutableLiveData<List<UiMessage>> loadNewMessages(Conversation conversation, String withUser, long startIndex, int count) {
         MutableLiveData<List<UiMessage>> result = new MutableLiveData<>();

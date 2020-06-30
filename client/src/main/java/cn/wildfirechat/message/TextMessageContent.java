@@ -81,11 +81,4 @@ public class TextMessageContent extends MessageContent {
             return new TextMessageContent[size];
         }
     };
-
-    @Override
-    public String toString() {
-        return "TextMessageContent{" +
-                "content='" + content + '\'' +
-                "} " + super.toString();
-    }
 }

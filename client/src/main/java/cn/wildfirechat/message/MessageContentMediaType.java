@@ -18,7 +18,6 @@ public enum MessageContentMediaType {
     private int value;
 
     MessageContentMediaType(int value) {
-
         this.value = value;
     }
 
@@ -33,12 +32,5 @@ public enum MessageContentMediaType {
         }
         return null;
         //throw new IllegalArgumentException("mediaType " + mediaType + " is invalid");
-    }
-
-    @Override
-    public String toString() {
-        return "MessageContentMediaType{" +
-                "value=" + value +
-                "} " + super.toString();
     }
 }

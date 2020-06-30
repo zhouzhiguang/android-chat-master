@@ -5,8 +5,6 @@ import android.os.Handler;
 
 import androidx.multidex.MultiDexApplication;
 
-import com.apkfuns.logutils.LogUtils;
-
 public class BaseApp extends MultiDexApplication {
 
     //以下属性应用于整个应用程序，合理利用资源，减少资源浪费
@@ -17,11 +15,7 @@ public class BaseApp extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtils.getLogConfig()
-                .configAllowLog(true)
-                .configTagPrefix("野火im日志输出：")
-                .configShowBorders(true)
-                .configFormatTag("%d{HH:mm:ss:SSS} %t %c{-5}");
+
         //对全局属性赋值
         mContext = getApplicationContext();
         mMainThreadId = android.os.Process.myTid();

@@ -15,7 +15,6 @@ import cn.wildfirechat.model.ProtoMessageContent;
  */
 
 public class MessagePayload implements Parcelable {
-    private MessageContentType messageContentType;
 
     public /*MessageContentType*/ int contentType;
     public String searchableContent;
@@ -26,7 +25,7 @@ public class MessagePayload implements Parcelable {
     public int mentionedType;
     public List<String> mentionedTargets;
 
-    //消息类型
+
     public MessageContentMediaType mediaType;
     public String remoteMediaUrl;
 
@@ -132,23 +131,4 @@ public class MessagePayload implements Parcelable {
             return new MessagePayload[size];
         }
     };
-
-    @Override
-    public String toString() {
-        return "MessagePayload{" +
-                "messageContentType=" + messageContentType +
-                ", contentType=" + contentType +
-                ", searchableContent='" + searchableContent + '\'' +
-                ", pushContent='" + pushContent + '\'' +
-                ", content='" + content + '\'' +
-                ", binaryContent=" + Arrays.toString(binaryContent) +
-                ", mentionedType=" + mentionedType +
-                ", mentionedTargets=" + mentionedTargets +
-                ", mediaType=" + mediaType +
-                ", remoteMediaUrl='" + remoteMediaUrl + '\'' +
-                ", localMediaPath='" + localMediaPath + '\'' +
-                ", localContent='" + localContent + '\'' +
-                ", extra='" + extra + '\'' +
-                '}';
-    }
 }

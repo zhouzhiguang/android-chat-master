@@ -3,7 +3,6 @@ package cn.wildfire.chat.app;
 import android.app.ActivityManager;
 import android.content.Context;
 
-import com.apkfuns.logutils.LogUtils;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.File;
@@ -17,7 +16,6 @@ import cn.wildfirechat.push.PushService;
 
 public class MyApp extends BaseApp {
 
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -28,8 +26,6 @@ public class MyApp extends BaseApp {
             CrashReport.initCrashReport(getApplicationContext(), Config.BUGLY_ID, false);
         }
         // 只在主进程初始化
-        String processname = getCurProcessName(this);
-        LogUtils.e("看看进程名字：" + processname);
         if (getCurProcessName(this).equals(BuildConfig.APPLICATION_ID)) {
             WfcUIKit wfcUIKit = WfcUIKit.getWfcUIKit();
             wfcUIKit.init(this);
@@ -38,8 +34,6 @@ public class MyApp extends BaseApp {
             MessageViewHolderManager.getInstance().registerMessageViewHolder(LocationMessageContentViewHolder.class);
             setupWFCDirs();
         }
-
-
     }
 
     private void setupWFCDirs() {

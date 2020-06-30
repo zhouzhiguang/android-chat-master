@@ -1,6 +1,5 @@
 package cn.wildfire.chat.kit.conversation;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -31,8 +30,6 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.apkfuns.logutils.LogUtils;
-import com.google.gson.Gson;
 
 import java.util.List;
 import java.util.Map;
@@ -77,26 +74,13 @@ import cn.wildfirechat.model.UserInfo;
 import cn.wildfirechat.remote.ChatManager;
 import cn.wildfirechat.remote.UserSettingScope;
 
-/**
- * @ProjectName:
- * @Package: cn.wildfire.chat.kit.conversation
- * @ClassName: ConversationFragment
- * @Description: 聊天主要fragment页
- * @Author: 作者名
- * @CreateDate: 2020/6/9 17:18
- * @UpdateUser: 更新者：
- * @UpdateDate: 2020/6/9 17:18
- * @UpdateRemark: 更新说明：
- * @Version: 1.0
- *
- */
 public class ConversationFragment extends Fragment implements
-        KeyboardAwareLinearLayout.OnKeyboardShownListener,
-        KeyboardAwareLinearLayout.OnKeyboardHiddenListener,
-        ConversationMessageAdapter.OnPortraitClickListener,
-        ConversationMessageAdapter.OnPortraitLongClickListener,
-        ConversationInputPanel.OnConversationInputPanelStateChangeListener,
-        ConversationMessageAdapter.OnMessageCheckListener, ConversationMessageAdapter.OnMessageReceiptClickListener {
+    KeyboardAwareLinearLayout.OnKeyboardShownListener,
+    KeyboardAwareLinearLayout.OnKeyboardHiddenListener,
+    ConversationMessageAdapter.OnPortraitClickListener,
+    ConversationMessageAdapter.OnPortraitLongClickListener,
+    ConversationInputPanel.OnConversationInputPanelStateChangeListener,
+    ConversationMessageAdapter.OnMessageCheckListener, ConversationMessageAdapter.OnMessageReceiptClickListener {
 
     public static final int REQUEST_PICK_MENTION_CONTACT = 100;
     public static final int REQUEST_CODE_GROUP_VIDEO_CHAT = 101;
@@ -132,7 +116,6 @@ public class ConversationFragment extends Fragment implements
     private ChatRoomViewModel chatRoomViewModel;
 
     private Handler handler;
-    //toFocusMessageId 消息 聚焦id
     private long initialFocusedMessageId;
     // 用户channel主发起，针对某个用户的会话
     private String channelPrivateChatUser;
@@ -165,13 +148,13 @@ public class ConversationFragment extends Fragment implements
                 if (moveToBottom || uiMessage.message.sender.equals(ChatManager.Instance().getUserId())) {
                     UIUtils.postTaskDelay(() -> {
 
-                                int position = adapter.getItemCount() - 1;
-                                if (position < 0) {
-                                    return;
-                                }
-                                recyclerView.scrollToPosition(position);
-                            },
-                            100);
+                            int position = adapter.getItemCount() - 1;
+                            if (position < 0) {
+                                return;
+                            }
+                            recyclerView.scrollToPosition(position);
+                        },
+                        100);
                 }
             }
             if (content instanceof TypingMessageContent && uiMessage.message.direction == MessageDirection.Receive) {
@@ -213,7 +196,7 @@ public class ConversationFragment extends Fragment implements
     private boolean isDisplayableMessage(UiMessage uiMessage) {
         MessageContent content = uiMessage.message.content;
         if (content.getPersistFlag() == PersistFlag.Persist
-                || content.getPersistFlag() == PersistFlag.Persist_And_Count) {
+            || content.getPersistFlag() == PersistFlag.Persist_And_Count) {
             return true;
         }
         return false;
@@ -225,14 +208,13 @@ public class ConversationFragment extends Fragment implements
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences("sticker", Context.MODE_PRIVATE);
             for (Map.Entry<String, String> entry : stringStringMap.entrySet()) {
                 sharedPreferences.edit()
-                        .putString(entry.getKey(), entry.getValue())
-                        .apply();
+                    .putString(entry.getKey(), entry.getValue())
+                    .apply();
             }
 
         }
     };
 
-    //回话被移除监听
     private Observer<Conversation> clearConversationMessageObserver = new Observer<Conversation>() {
         @Override
         public void onChanged(Conversation conversation) {
@@ -260,14 +242,6 @@ public class ConversationFragment extends Fragment implements
     };
 
     private void initGroupObservers() {
-        groupMembersUpdateLiveDataObserver = new Observer<List<GroupMember>>() {
-
-            @Override
-            public void onChanged(List<GroupMember> groupMembers) {
-
-            }
-        };
-
         groupMembersUpdateLiveDataObserver = groupMembers -> {
             if (groupMembers == null || groupInfo == null) {
                 return;
@@ -296,7 +270,7 @@ public class ConversationFragment extends Fragment implements
             }
         };
 
-        //群组成员总会被通知
+
         groupViewModel.groupInfoUpdateLiveData().observeForever(groupInfosUpdateLiveDataObserver);
         groupViewModel.groupMembersUpdateLiveData().observeForever(groupMembersUpdateLiveDataObserver);
     }
@@ -415,13 +389,7 @@ public class ConversationFragment extends Fragment implements
 
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
         userViewModel.userInfoLiveData().observeForever(userInfoUpdateLiveDataObserver);
-        settingUpdateLiveDataObserver = new Observer<Object>() {
 
-            @Override
-            public void onChanged(Object o) {
-
-            }
-        };
         settingUpdateLiveDataObserver = o -> {
             boolean show = "1".equals(userViewModel.getUserSetting(UserSettingScope.GroupHideNickname, groupInfo.target));
             if (showGroupMemberName != show) {
@@ -435,28 +403,20 @@ public class ConversationFragment extends Fragment implements
 
     private void setupConversation(Conversation conversation) {
 
-        //如果是群聊
         if (conversation.type == Conversation.ConversationType.Group) {
-            Gson gson = new Gson();
-            String json = gson.toJson(conversation);
-            LogUtils.e("看一下会话：" + conversation);
-            LogUtils.e("看一下会话JSON：" + conversation);
             groupViewModel = ViewModelProviders.of(this).get(GroupViewModel.class);
             initGroupObservers();
             groupViewModel.getGroupMembers(conversation.target, true);
             groupInfo = groupViewModel.getGroupInfo(conversation.target, true);
-            //获取当前用户在群里的身份成员信息
             groupMember = groupViewModel.getGroupMember(conversation.target, userViewModel.getUserId());
             showGroupMemberName = "1".equals(userViewModel.getUserSetting(UserSettingScope.GroupHideNickname, groupInfo.target));
-            //跟新群聊状态有禁言套餐
+
             updateGroupMuteStatus();
         }
+        userViewModel.getUserInfo(userViewModel.getUserId(), true);
 
-        UserInfo userInfo = userViewModel.getUserInfo(userViewModel.getUserId(), true);
-        LogUtils.e("看看用户信息：" + userInfo.toString());
         inputPanel.setupConversation(conversation);
 
-        //除了聊天室
         if (conversation.type != Conversation.ConversationType.ChatRoom) {
 
             MutableLiveData<List<UiMessage>> messages;
@@ -464,7 +424,6 @@ public class ConversationFragment extends Fragment implements
                 shouldContinueLoadNewMessage = true;
                 messages = conversationViewModel.loadAroundMessages(conversation, channelPrivateChatUser, initialFocusedMessageId, MESSAGE_LOAD_AROUND);
             } else {
-                LogUtils.e("看看channelPrivateChatUser：" + channelPrivateChatUser);
                 messages = conversationViewModel.getMessages(conversation, channelPrivateChatUser);
             }
 
@@ -474,7 +433,6 @@ public class ConversationFragment extends Fragment implements
             adapter.setReadEntries(ChatManager.Instance().getConversationRead(conversation));
             messages.observe(this, uiMessages -> {
                 swipeRefreshLayout.setRefreshing(false);
-                LogUtils.e("ConversationFragment查看消息message" + uiMessages.toString());
                 adapter.setMessages(uiMessages);
                 adapter.notifyDataSetChanged();
 
@@ -517,30 +475,30 @@ public class ConversationFragment extends Fragment implements
     private void joinChatRoom() {
         chatRoomViewModel = ViewModelProviders.of(this).get(ChatRoomViewModel.class);
         chatRoomViewModel.joinChatRoom(conversation.target)
-                .observe(this, new Observer<OperateResult<Boolean>>() {
-                    @Override
-                    public void onChanged(@Nullable OperateResult<Boolean> booleanOperateResult) {
-                        if (booleanOperateResult.isSuccess()) {
-                            String welcome = "欢迎 %s 加入聊天室";
-                            TipNotificationContent content = new TipNotificationContent();
-                            String userId = userViewModel.getUserId();
-                            UserInfo userInfo = userViewModel.getUserInfo(userId, false);
-                            if (userInfo != null) {
-                                content.tip = String.format(welcome, userViewModel.getUserDisplayName(userInfo));
-                            } else {
-                                content.tip = String.format(welcome, "<" + userId + ">");
-                            }
-                            handler.postDelayed(() -> {
-                                messageViewModel.sendMessage(conversation, content);
-                            }, 1000);
-                            setChatRoomConversationTitle();
-
+            .observe(this, new Observer<OperateResult<Boolean>>() {
+                @Override
+                public void onChanged(@Nullable OperateResult<Boolean> booleanOperateResult) {
+                    if (booleanOperateResult.isSuccess()) {
+                        String welcome = "欢迎 %s 加入聊天室";
+                        TipNotificationContent content = new TipNotificationContent();
+                        String userId = userViewModel.getUserId();
+                        UserInfo userInfo = userViewModel.getUserInfo(userId, false);
+                        if (userInfo != null) {
+                            content.tip = String.format(welcome, userViewModel.getUserDisplayName(userInfo));
                         } else {
-                            Toast.makeText(getActivity(), "加入聊天室失败", Toast.LENGTH_SHORT).show();
-                            getActivity().finish();
+                            content.tip = String.format(welcome, "<" + userId + ">");
                         }
+                        handler.postDelayed(() -> {
+                            messageViewModel.sendMessage(conversation, content);
+                        }, 1000);
+                        setChatRoomConversationTitle();
+
+                    } else {
+                        Toast.makeText(getActivity(), "加入聊天室失败", Toast.LENGTH_SHORT).show();
+                        getActivity().finish();
                     }
-                });
+                }
+            });
     }
 
     private void quitChatRoom() {
@@ -559,13 +517,13 @@ public class ConversationFragment extends Fragment implements
 
     private void setChatRoomConversationTitle() {
         chatRoomViewModel.getChatRoomInfo(conversation.target, System.currentTimeMillis())
-                .observe(this, chatRoomInfoOperateResult -> {
-                    if (chatRoomInfoOperateResult.isSuccess()) {
-                        ChatRoomInfo chatRoomInfo = chatRoomInfoOperateResult.getResult();
-                        conversationTitle = chatRoomInfo.title;
-                        setActivityTitle(conversationTitle);
-                    }
-                });
+            .observe(this, chatRoomInfoOperateResult -> {
+                if (chatRoomInfoOperateResult.isSuccess()) {
+                    ChatRoomInfo chatRoomInfo = chatRoomInfoOperateResult.getResult();
+                    conversationTitle = chatRoomInfo.title;
+                    setActivityTitle(conversationTitle);
+                }
+            });
     }
 
     private void setTitle() {
@@ -737,26 +695,21 @@ public class ConversationFragment extends Fragment implements
     @Override
     public void onKeyboardShown() {
         inputPanel.onKeyboardShown();
-        LogUtils.i("键盘弹起回调");
         recyclerView.scrollToPosition(adapter.getItemCount() - 1);
     }
 
     @Override
     public void onKeyboardHidden() {
-
         inputPanel.onKeyboardHidden();
     }
 
-    @SuppressLint("FragmentLiveDataObserve")
     private void reloadMessage() {
         conversationViewModel.getMessages(conversation, channelPrivateChatUser).observe(this, uiMessages -> {
-
             adapter.setMessages(uiMessages);
             adapter.notifyDataSetChanged();
         });
     }
 
-    @SuppressLint("FragmentLiveDataObserve")
     private void loadMoreOldMessages() {
         long fromMessageId = Long.MAX_VALUE;
         long fromMessageUid = Long.MAX_VALUE;
@@ -766,28 +719,28 @@ public class ConversationFragment extends Fragment implements
         }
 
         conversationViewModel.loadOldMessages(conversation, channelPrivateChatUser, fromMessageId, fromMessageUid, MESSAGE_LOAD_COUNT_PER_TIME)
-                .observe(this, uiMessages -> {
-                    adapter.addMessagesAtHead(uiMessages);
+            .observe(this, uiMessages -> {
+                adapter.addMessagesAtHead(uiMessages);
 
-                    swipeRefreshLayout.setRefreshing(false);
-                });
+                swipeRefreshLayout.setRefreshing(false);
+            });
     }
 
     private void loadMoreNewMessages() {
         loadingNewMessage = true;
         adapter.showLoadingNewMessageProgressBar();
         conversationViewModel.loadNewMessages(conversation, channelPrivateChatUser, adapter.getItem(adapter.getItemCount() - 2).message.messageId, MESSAGE_LOAD_COUNT_PER_TIME)
-                .observe(this, messages -> {
-                    loadingNewMessage = false;
-                    adapter.dismissLoadingNewMessageProgressBar();
+            .observe(this, messages -> {
+                loadingNewMessage = false;
+                adapter.dismissLoadingNewMessageProgressBar();
 
-                    if (messages == null || messages.isEmpty()) {
-                        shouldContinueLoadNewMessage = false;
-                    }
-                    if (messages != null && !messages.isEmpty()) {
-                        adapter.addMessagesAtTail(messages);
-                    }
-                });
+                if (messages == null || messages.isEmpty()) {
+                    shouldContinueLoadNewMessage = false;
+                }
+                if (messages != null && !messages.isEmpty()) {
+                    adapter.addMessagesAtTail(messages);
+                }
+            });
     }
 
     private void updateTypingStatusTitle(TypingMessageContent typingMessageContent) {
@@ -836,8 +789,6 @@ public class ConversationFragment extends Fragment implements
     @Override
     public void onInputPanelCollapsed() {
         // do nothing
-        LogUtils.e("输入🍞");
-
     }
 
     public void toggleMultiMessageMode(UiMessage message) {
@@ -861,7 +812,6 @@ public class ConversationFragment extends Fragment implements
         inputPanel.setInputText(text);
     }
 
-    //多选消息删除按钮
     private void setupMultiMessageAction() {
         multiMessageActionContainerLinearLayout.removeAllViews();
         List<MultiMessageAction> actions = MultiMessageActionManager.getInstance().getConversationActions(conversation);
@@ -879,14 +829,14 @@ public class ConversationFragment extends Fragment implements
                 List<UiMessage> checkedMessages = adapter.getCheckedMessages();
                 if (action.confirm()) {
                     new MaterialDialog.Builder(getActivity()).content(action.confirmPrompt())
-                            .negativeText("取消")
-                            .positiveText("确认")
-                            .onPositive((dialog, which) -> {
-                                action.onClick(checkedMessages);
-                                toggleConversationMode();
-                            })
-                            .build()
-                            .show();
+                        .negativeText("取消")
+                        .positiveText("确认")
+                        .onPositive((dialog, which) -> {
+                            action.onClick(checkedMessages);
+                            toggleConversationMode();
+                        })
+                        .build()
+                        .show();
 
                 } else {
                     action.onClick(checkedMessages);
@@ -955,21 +905,21 @@ public class ConversationFragment extends Fragment implements
         }
         StringBuilder builder = new StringBuilder();
         builder.append("已送达人数：")
-                .append(deliveryCount)
-                .append("\n")
-                .append("未送达人数：")
-                .append(groupInfo.memberCount - 1 - deliveryCount)
-                .append("\n")
-                .append("已读人数：")
-                .append(readCount)
-                .append("\n")
-                .append("未读人数：")
-                .append(groupInfo.memberCount - 1 - readCount)
+            .append(deliveryCount)
+            .append("\n")
+            .append("未送达人数：")
+            .append(groupInfo.memberCount - 1 - deliveryCount)
+            .append("\n")
+            .append("已读人数：")
+            .append(readCount)
+            .append("\n")
+            .append("未读人数：")
+            .append(groupInfo.memberCount - 1 - readCount)
         ;
         new MaterialDialog.Builder(getActivity())
-                .title("消息回执")
-                .content(builder.toString())
-                .build()
-                .show();
+            .title("消息回执")
+            .content(builder.toString())
+            .build()
+            .show();
     }
 }

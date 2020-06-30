@@ -3,8 +3,6 @@ package cn.wildfire.chat.kit.conversationlist;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.apkfuns.logutils.LogUtils;
-
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -32,7 +30,7 @@ import cn.wildfirechat.remote.OnSendMessageListener;
 public class ConversationListViewModel extends ViewModel implements OnReceiveMessageListener,
         OnSendMessageListener,
         OnRecallMessageListener,
-        OnDeleteMessageListener,
+    OnDeleteMessageListener,
         OnConversationInfoUpdateListener,
         OnRemoveConversationListener,
         OnConnectionStatusChangeListener,
@@ -56,9 +54,7 @@ public class ConversationListViewModel extends ViewModel implements OnReceiveMes
         ChatManager.Instance().addDeleteMessageListener(this);
         ChatManager.Instance().addClearMessageListener(this);
         ChatManager.Instance().addRemoveConversationListener(this);
-
     }
-
 
     @Override
     protected void onCleared() {
@@ -102,7 +98,6 @@ public class ConversationListViewModel extends ViewModel implements OnReceiveMes
         return ChatManager.Instance().getConversationList(conversationTypes, lines);
     }
 
-    //刷新数据
     public MutableLiveData<List<ConversationInfo>> conversationListLiveData() {
         if (conversationListLiveData == null) {
             conversationListLiveData = new MutableLiveData<>();
@@ -154,8 +149,6 @@ public class ConversationListViewModel extends ViewModel implements OnReceiveMes
 
     @Override
     public void onReceiveMessage(List<Message> messages, boolean hasMore) {
-        LogUtils.e("ConversationListViewModel接收到消息" + messages.size());
-        LogUtils.e("ConversationListViewModel接收到消息2" + messages.size());
         reloadConversationList(true);
         reloadConversationUnreadStatus();
     }

@@ -101,8 +101,9 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
             outgoingActionContainer.setVisibility(View.GONE);
             connectedActionContainer.setVisibility(View.VISIBLE);
             inviteeInfoContainer.setVisibility(View.GONE);
-        } else {
-            // do nothing now
+        } else if (state == AVEngineKit.CallState.Idle) {
+            getActivity().finish();
+            getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
     }
 
@@ -194,6 +195,7 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
         if (session == null) {
             if (getActivity() != null && !getActivity().isFinishing()) {
                 getActivity().finish();
+                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
             return;
         }
@@ -225,6 +227,7 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
             session.endCall();
         } else {
             getActivity().finish();
+            getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
     }
 
@@ -269,7 +272,7 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
     @OnClick(R.id.minimizeImageView)
     public void minimize() {
         gEngineKit.getCurrentSession().stopVideoSource();
-        ((SingleCallActivity) getActivity()).showFloatingView();
+        ((SingleCallActivity) getActivity()).showFloatingView(null);
     }
 
     // Log |msg| and Toast about it.
@@ -298,6 +301,7 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();
         if (session == null || AVEngineKit.CallState.Idle == session.getState()) {
             getActivity().finish();
+            getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } else if (AVEngineKit.CallState.Connected == session.getState()) {
             incomingActionContainer.setVisibility(View.GONE);
             outgoingActionContainer.setVisibility(View.GONE);
@@ -333,6 +337,7 @@ public class SingleVideoFragment extends Fragment implements AVEngineKit.CallSes
         UserInfo userInfo = userViewModel.getUserInfo(targetId, false);
         if (userInfo == null) {
             getActivity().finish();
+            getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             return;
         }
         GlideApp.with(this).load(userInfo.portrait).placeholder(R.mipmap.avatar_def).into(portraitImageView);

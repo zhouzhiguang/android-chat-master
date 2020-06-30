@@ -57,11 +57,4 @@ public enum MessageStatus {
         }
         return messageStatus;
     }
-
-    @Override
-    public String toString() {
-        return "MessageStatus{" +
-                "value=" + value +
-                "} " + super.toString();
-    }
 }

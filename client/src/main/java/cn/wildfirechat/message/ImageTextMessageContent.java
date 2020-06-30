@@ -143,14 +143,4 @@ public class ImageTextMessageContent extends MessageContent {
             return new ImageTextMessageContent[size];
         }
     };
-
-    @Override
-    public String toString() {
-        return "ImageTextMessageContent{" +
-                "title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", url='" + url + '\'' +
-                ", thumbnail=" + thumbnail +
-                "} " + super.toString();
-    }
 }

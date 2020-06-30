@@ -79,8 +79,9 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
                 outgoingActionContainer.setVisibility(View.VISIBLE);
                 descTextView.setVisibility(View.GONE);
                 durationTextView.setVisibility(View.VISIBLE);
-            } else {
-                // do nothing now
+            } else if(state == AVEngineKit.CallState.Idle) {
+                getActivity().finish();
+                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         });
     }
@@ -148,8 +149,8 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
     public void mute() {
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();
         if (session != null && session.getState() == AVEngineKit.CallState.Connected) {
-            session.muteAudio(audioEnable);
             audioEnable = !audioEnable;
+            session.muteAudio(!audioEnable);
             muteImageView.setSelected(!audioEnable);
         }
     }
@@ -161,6 +162,7 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
             session.endCall();
         } else {
             getActivity().finish();
+            getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
     }
 
@@ -170,6 +172,7 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
         if (session == null) {
             if (getActivity() != null && !getActivity().isFinishing()) {
                 getActivity().finish();
+                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
             return;
         }
@@ -180,7 +183,7 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
 
     @OnClick(R.id.minimizeImageView)
     public void minimize() {
-        ((SingleCallActivity) getActivity()).showFloatingView();
+        ((SingleCallActivity) getActivity()).showFloatingView(null);
     }
 
     @OnClick(R.id.speakerImageView)
@@ -207,6 +210,7 @@ public class SingleAudioFragment extends Fragment implements AVEngineKit.CallSes
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();
         if (session == null || session.getState() == AVEngineKit.CallState.Idle) {
             getActivity().finish();
+            getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             return;
         }
         if (session.getState() == AVEngineKit.CallState.Connected) {

@@ -83,6 +83,7 @@ public class MultiCallVideoFragment extends Fragment implements AVEngineKit.Call
         AVEngineKit.CallSession session = getEngineKit().getCurrentSession();
         if (session == null || session.getState() == AVEngineKit.CallState.Idle) {
             getActivity().finish();
+            getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             return;
         }
 
@@ -176,7 +177,7 @@ public class MultiCallVideoFragment extends Fragment implements AVEngineKit.Call
         for (String participant : participants) {
             session.setupRemoteVideo(participant, null, scalingType);
         }
-        ((MultiCallActivity) getActivity()).showFloatingView();
+        ((MultiCallActivity) getActivity()).showFloatingView(focusVideoUserId);
     }
 
     @OnClick(R.id.addParticipantImageView)
@@ -188,9 +189,9 @@ public class MultiCallVideoFragment extends Fragment implements AVEngineKit.Call
     void mute() {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
         if (session != null && session.getState() == AVEngineKit.CallState.Connected) {
-            session.muteAudio(!micEnabled);
             micEnabled = !micEnabled;
-            muteImageView.setSelected(micEnabled);
+            session.muteAudio(!micEnabled);
+            muteImageView.setSelected(!micEnabled);
         }
     }
 
@@ -224,6 +225,8 @@ public class MultiCallVideoFragment extends Fragment implements AVEngineKit.Call
     @Override
     public void didCallEndWithReason(AVEngineKit.CallEndReason callEndReason) {
         // do nothing
+        getActivity().finish();
+        getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override
@@ -233,6 +236,7 @@ public class MultiCallVideoFragment extends Fragment implements AVEngineKit.Call
             updateParticipantStatus(callSession);
         } else if (callState == AVEngineKit.CallState.Idle) {
             getActivity().finish();
+            getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
         Toast.makeText(getActivity(), "" + callState.name(), Toast.LENGTH_SHORT).show();
     }

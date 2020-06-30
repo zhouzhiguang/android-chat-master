@@ -17,15 +17,4 @@ public class UiMessage {
         this.message = message;
     }
 
-    @Override
-    public String toString() {
-        return "UiMessage{" +
-                "isPlaying=" + isPlaying +
-                ", isDownloading=" + isDownloading +
-                ", isFocus=" + isFocus +
-                ", isChecked=" + isChecked +
-                ", progress=" + progress +
-                ", message=" + message +
-                '}';
-    }
 }

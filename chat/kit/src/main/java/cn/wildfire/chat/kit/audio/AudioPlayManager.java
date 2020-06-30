@@ -32,7 +32,7 @@ public class AudioPlayManager implements SensorEventListener {
     }
 
     public static AudioPlayManager getInstance() {
-        return AudioPlayManager.SingletonHolder.sInstance;
+        return SingletonHolder.sInstance;
     }
 
     @Override

@@ -23,8 +23,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
@@ -74,15 +76,24 @@ public abstract class VoipBaseActivity extends FragmentActivity implements AVEng
             wakeLock.acquire();
         }
 
-        getWindow().addFlags(LayoutParams.FLAG_FULLSCREEN | LayoutParams.FLAG_KEEP_SCREEN_ON
-            | LayoutParams.FLAG_SHOW_WHEN_LOCKED | LayoutParams.FLAG_TURN_SCREEN_ON);
-        getWindow().getDecorView().setSystemUiVisibility(getSystemUiVisibility());
+        //Todo 把标题栏改成黑色
+//        getWindow().addFlags(LayoutParams.FLAG_FULLSCREEN | LayoutParams.FLAG_KEEP_SCREEN_ON
+//            | LayoutParams.FLAG_SHOW_WHEN_LOCKED | LayoutParams.FLAG_TURN_SCREEN_ON);
+//        getWindow().getDecorView().setSystemUiVisibility(getSystemUiVisibility());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            //设置修改状态栏
+            window.addFlags(LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            //设置状态栏的颜色，和你的app主题或者标题栏颜色设置一致就ok了
+            window.setStatusBarColor(getResources().getColor(android.R.color.black));
+        }
 
         try {
             gEngineKit = AVEngineKit.Instance();
         } catch (NotInitializedExecption notInitializedExecption) {
             notInitializedExecption.printStackTrace();
-            finish();
+            finishFadeout();
         }
 
         // Check for mandatory permissions.
@@ -97,7 +108,7 @@ public abstract class VoipBaseActivity extends FragmentActivity implements AVEng
 
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();
         if (session == null || session.getState() == AVEngineKit.CallState.Idle) {
-            finish();
+            finishFadeout();
             return;
         }
         session.setCallback(this);
@@ -108,7 +119,7 @@ public abstract class VoipBaseActivity extends FragmentActivity implements AVEng
         for (int result : grantResults) {
             if (result != PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "需要录音和摄像头权限，才能进行语音通话", Toast.LENGTH_SHORT).show();
-                finish();
+                finishFadeout();
                 return;
             }
         }
@@ -131,7 +142,7 @@ public abstract class VoipBaseActivity extends FragmentActivity implements AVEng
         }
         AVEngineKit.CallSession session = gEngineKit.getCurrentSession();
         if (session == null || session.getState() == AVEngineKit.CallState.Idle) {
-            finish();
+            finishFadeout();
             return;
         }
         session.setCallback(this);
@@ -149,7 +160,7 @@ public abstract class VoipBaseActivity extends FragmentActivity implements AVEng
             session.resetRenderer();
             session.setCallback(null);
             if (!isChangingConfigurations()) {
-                showFloatingView();
+                showFloatingView(null);
             }
         }
     }
@@ -172,7 +183,7 @@ public abstract class VoipBaseActivity extends FragmentActivity implements AVEng
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         audioManager.setMode(AudioManager.MODE_NORMAL);
         audioManager.setSpeakerphoneOn(false);
-        finish();
+        finishFadeout();
     }
 
     @Override
@@ -255,20 +266,28 @@ public abstract class VoipBaseActivity extends FragmentActivity implements AVEng
         // do nothing
     }
 
-    public void showFloatingView() {
+    public void showFloatingView(String focusTargetId) {
         if (!checkOverlayPermission()) {
             return;
         }
 
         Intent intent = new Intent(this, VoipCallService.class);
         intent.putExtra("showFloatingView", true);
+        if (!TextUtils.isEmpty(focusTargetId)) {
+            intent.putExtra("focusTargetId", focusTargetId);
+        }
         startService(intent);
-        finish();
+        finishFadeout();
     }
 
     public void hideFloatingView() {
         Intent intent = new Intent(this, VoipCallService.class);
         intent.putExtra("showFloatingView", false);
         startService(intent);
+    }
+
+    protected void finishFadeout() {
+        finish();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }

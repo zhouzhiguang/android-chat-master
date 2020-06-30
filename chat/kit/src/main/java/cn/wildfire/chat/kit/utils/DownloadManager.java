@@ -166,7 +166,7 @@ public class DownloadManager {
     public static String md5(String s) {
         try {
             // Create MD5 Hash
-            MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+            MessageDigest digest = MessageDigest.getInstance("MD5");
             digest.update(s.getBytes());
             byte[] messageDigest = digest.digest();
 

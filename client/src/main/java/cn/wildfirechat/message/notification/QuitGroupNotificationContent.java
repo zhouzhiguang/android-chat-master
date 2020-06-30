@@ -15,7 +15,6 @@ import static cn.wildfirechat.message.core.MessageContentType.ContentType_QUIT_G
 
 /**
  * Created by heavyrainlee on 20/12/2017.
- * 退出群组
  */
 
 @ContentTag(type = ContentType_QUIT_GROUP, flag = PersistFlag.Persist)

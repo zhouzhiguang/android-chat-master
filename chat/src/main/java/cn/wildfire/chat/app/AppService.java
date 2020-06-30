@@ -93,7 +93,6 @@ public class AppService implements AppServiceProvider {
         OKHttpHelper.post(url, params, new SimpleCallback<LoginResult>() {
             @Override
             public void onUiSuccess(LoginResult loginResult) {
-
                 callback.onUiSuccess(loginResult);
             }
 
@@ -190,7 +189,7 @@ public class AppService implements AppServiceProvider {
 
 
     @Override
-    public void getGroupAnnouncement(String groupId, AppServiceProvider.GetGroupAnnouncementCallback callback) {
+    public void getGroupAnnouncement(String groupId, GetGroupAnnouncementCallback callback) {
         //从SP中获取到历史数据callback回去，然后再从网络刷新
         String url = Config.APP_SERVER_ADDRESS + "/get_group_announcement";
 
@@ -211,7 +210,7 @@ public class AppService implements AppServiceProvider {
 
 
     @Override
-    public void updateGroupAnnouncement(String groupId, String announcement, AppServiceProvider.UpdateGroupAnnouncementCallback callback) {
+    public void updateGroupAnnouncement(String groupId, String announcement, UpdateGroupAnnouncementCallback callback) {
         //更新到应用服务，再保存到本地SP中
         String url = Config.APP_SERVER_ADDRESS + "/put_group_announcement";
 

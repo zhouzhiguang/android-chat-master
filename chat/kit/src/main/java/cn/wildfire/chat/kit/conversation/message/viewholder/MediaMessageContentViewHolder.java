@@ -32,7 +32,6 @@ public class MediaMessageContentViewHolder extends NormalMessageContentViewHolde
         }
     }
 
-    //预览多媒体
     protected void previewMM() {
         List<UiMessage> messages = ((ConversationMessageAdapter) adapter).getMessages();
         List<MediaEntry> entries = new ArrayList<>();
@@ -47,7 +46,7 @@ public class MediaMessageContentViewHolder extends NormalMessageContentViewHolde
                 continue;
             }
             MediaEntry entry = new MediaEntry();
-            if (msg.message.content.getType() == cn.wildfirechat.message.core.MessageContentType.ContentType_Image) {
+            if (msg.message.content.getType() == MessageContentType.ContentType_Image) {
                 entry.setType(MediaEntry.TYPE_IMAGE);
                 entry.setThumbnail(((ImageMessageContent) msg.message.content).getThumbnail());
 

@@ -167,18 +167,4 @@ public class RecallMessageContent extends NotificationMessageContent {
             return new RecallMessageContent[size];
         }
     };
-
-    @Override
-    public String toString() {
-        return "RecallMessageContent{" +
-                "operatorId='" + operatorId + '\'' +
-                ", messageUid=" + messageUid +
-                ", originalSender='" + originalSender + '\'' +
-                ", originalContentType=" + originalContentType +
-                ", originalSearchableContent='" + originalSearchableContent + '\'' +
-                ", originalContent='" + originalContent + '\'' +
-                ", originalExtra='" + originalExtra + '\'' +
-                ", originalMessageTimestamp=" + originalMessageTimestamp +
-                "} " + super.toString();
-    }
 }

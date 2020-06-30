@@ -115,26 +115,4 @@ public class UserInfo implements Parcelable, Comparable<UserInfo> {
         result = 31 * result + type;
         return result;
     }
-
-    @Override
-    public String toString() {
-        return "UserInfo{" +
-                "uid='" + uid + '\'' +
-                ", name='" + name + '\'' +
-                ", displayName='" + displayName + '\'' +
-                ", groupAlias='" + groupAlias + '\'' +
-                ", friendAlias='" + friendAlias + '\'' +
-                ", portrait='" + portrait + '\'' +
-                ", gender=" + gender +
-                ", mobile='" + mobile + '\'' +
-                ", email='" + email + '\'' +
-                ", address='" + address + '\'' +
-                ", company='" + company + '\'' +
-                ", social='" + social + '\'' +
-                ", extra='" + extra + '\'' +
-                ", updateDt=" + updateDt +
-                ", type=" + type +
-                ", deleted=" + deleted +
-                '}';
-    }
 }

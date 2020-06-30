@@ -18,14 +18,11 @@ public class Message implements Parcelable {
 
     public long messageId;
     public Conversation conversation;
-    //发件人
     public String sender;
     /**
      * 消息在会话中定向发送给指定用户
      */
     public String[] toUsers;
-    //消息内容
-
     public MessageContent content;
     public MessageDirection direction;
     public MessageStatus status;
@@ -114,20 +111,5 @@ public class Message implements Parcelable {
         result = 31 * result + (int) (messageUid ^ (messageUid >>> 32));
         result = 31 * result + (int) (serverTime ^ (serverTime >>> 32));
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Message{" +
-                "messageId=" + messageId +
-                ", conversation=" + conversation +
-                ", sender='" + sender + '\'' +
-                ", toUsers=" + Arrays.toString(toUsers) +
-                ", content=" + content +
-                ", direction=" + direction +
-                ", status=" + status +
-                ", messageUid=" + messageUid +
-                ", serverTime=" + serverTime +
-                '}';
     }
 }

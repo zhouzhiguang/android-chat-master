@@ -94,7 +94,6 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private void processConversationClick(ConversationViewHolder viewHolder, View itemView) {
         itemView.setOnClickListener(viewHolder::onClick);
-
     }
 
     private static class ContextMenuItemWrapper {

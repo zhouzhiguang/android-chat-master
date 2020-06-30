@@ -1,7 +1,6 @@
 package cn.wildfire.chat.app.main;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -19,12 +18,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.apkfuns.logutils.LogUtils;
+import androidx.core.app.ActivityOptionsCompat;
 
 import butterknife.ButterKnife;
 import cn.wildfire.chat.app.login.SMSLoginActivity;
 import cn.wildfirechat.chat.R;
+
+import static cn.wildfire.chat.app.BaseApp.getContext;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -90,7 +90,6 @@ public class SplashActivity extends AppCompatActivity {
         showNextScreen();
     }
 
-    @SuppressLint("MissingSuperCall")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_DRAW_OVERLAY) {
@@ -107,7 +106,6 @@ public class SplashActivity extends AppCompatActivity {
 
     private void showNextScreen() {
         if (!TextUtils.isEmpty(id) && !TextUtils.isEmpty(token)) {
-            LogUtils.e("我登录的id：" + id);
             showMain();
         } else {
             showLogin();
@@ -117,14 +115,18 @@ public class SplashActivity extends AppCompatActivity {
     private void showMain() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        Bundle bundle = ActivityOptionsCompat.makeCustomAnimation(getContext(),
+                android.R.anim.fade_in, android.R.anim.fade_out).toBundle();
+        startActivity(intent, bundle);
         finish();
     }
 
     private void showLogin() {
         Intent intent;
         intent = new Intent(this, SMSLoginActivity.class);
-        startActivity(intent);
+        Bundle bundle = ActivityOptionsCompat.makeCustomAnimation(getContext(),
+                android.R.anim.fade_in, android.R.anim.fade_out).toBundle();
+        startActivity(intent, bundle);
         finish();
     }
 }

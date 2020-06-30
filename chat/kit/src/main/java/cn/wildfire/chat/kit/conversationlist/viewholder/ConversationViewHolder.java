@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.apkfuns.logutils.LogUtils;
 import com.lqr.emoji.MoonUtils;
 
 import java.util.Arrays;
@@ -78,7 +77,6 @@ public abstract class ConversationViewHolder extends RecyclerView.ViewHolder {
 
     /**
      * 设置头像、名称
-     * 巧用-》子类用于绑定操作
      *
      * @param conversationInfo
      */
@@ -167,7 +165,6 @@ public abstract class ConversationViewHolder extends RecyclerView.ViewHolder {
     public void onClick(View itemView) {
         Intent intent = new Intent(fragment.getActivity(), ConversationActivity.class);
         intent.putExtra("conversation", conversationInfo.conversation);
-        LogUtils.e("跳转到消息聊天界面：" + conversationInfo.conversation);
         fragment.startActivity(intent);
     }
 

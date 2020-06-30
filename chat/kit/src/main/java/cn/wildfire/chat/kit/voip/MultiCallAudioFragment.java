@@ -126,7 +126,7 @@ public class MultiCallAudioFragment extends Fragment implements AVEngineKit.Call
 
     @OnClick(R.id.minimizeImageView)
     void minimize() {
-        ((MultiCallActivity) getActivity()).showFloatingView();
+        ((MultiCallActivity) getActivity()).showFloatingView(null);
     }
 
     @OnClick(R.id.addParticipantImageView)
@@ -138,8 +138,8 @@ public class MultiCallAudioFragment extends Fragment implements AVEngineKit.Call
     void mute() {
         AVEngineKit.CallSession session = AVEngineKit.Instance().getCurrentSession();
         if (session != null && session.getState() == AVEngineKit.CallState.Connected) {
-            session.muteAudio(audioEnable);
             audioEnable = !audioEnable;
+            session.muteAudio(!audioEnable);
             muteImageView.setSelected(!audioEnable);
         }
     }

@@ -55,13 +55,4 @@ public class UnreadCount implements Parcelable {
             return new UnreadCount[size];
         }
     };
-
-    @Override
-    public String toString() {
-        return "UnreadCount{" +
-                "unread=" + unread +
-                ", unreadMention=" + unreadMention +
-                ", unreadMentionAll=" + unreadMentionAll +
-                '}';
-    }
 }

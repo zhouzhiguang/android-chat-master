@@ -6,15 +6,14 @@ import android.os.Parcelable;
 import cn.wildfirechat.message.Message;
 
 /**
- * 会话信息包含最后一条信息
-
+ * Created by heavyrain on 2017/12/13.
  */
 
 public class ConversationInfo implements Parcelable {
     public Conversation conversation;
     public Message lastMessage;
     public long timestamp;
-    public String draft;//草稿
+    public String draft;
     public UnreadCount unreadCount;
     public boolean isTop;
     public boolean isSilent;
@@ -80,16 +79,4 @@ public class ConversationInfo implements Parcelable {
         return Conversation.hashCode(conversation, lastMessage, timestamp, draft, unreadCount, isTop, isSilent);
     }
 
-    @Override
-    public String toString() {
-        return "ConversationInfo{" +
-                "conversation=" + conversation +
-                ", lastMessage=" + lastMessage +
-                ", timestamp=" + timestamp +
-                ", draft='" + draft + '\'' +
-                ", unreadCount=" + unreadCount +
-                ", isTop=" + isTop +
-                ", isSilent=" + isSilent +
-                '}';
-    }
 }

@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -31,7 +30,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.apkfuns.logutils.LogUtils;
 import com.lqr.emoji.EmotionLayout;
 import com.lqr.emoji.IEmotionExtClickListener;
 import com.lqr.emoji.IEmotionSelectedListener;
@@ -181,8 +179,6 @@ public class ConversationInputPanel extends FrameLayout implements IEmotionSelec
         emotionLayout.setEmotionAddVisiable(true);
         emotionLayout.setEmotionSettingVisiable(true);
 
-        LogUtils.e("看一下表情布局" + emotionLayout.getVisibility());
-
         // audio record panel
         audioRecorderPanel = new AudioRecorderPanel(getContext());
         audioRecorderPanel.setRecordListener(new AudioRecorderPanel.OnRecordListener() {
@@ -202,7 +198,6 @@ public class ConversationInputPanel extends FrameLayout implements IEmotionSelec
 
             @Override
             public void onRecordStateChanged(AudioRecorderPanel.RecordState state) {
-                //这里是正在录音中消息
                 if (state == AudioRecorderPanel.RecordState.START) {
                     TypingMessageContent content = new TypingMessageContent(TypingMessageContent.TYPING_VOICE);
                     messageViewModel.sendMessage(conversation, content);
@@ -314,7 +309,7 @@ public class ConversationInputPanel extends FrameLayout implements IEmotionSelec
     void afterInputTextChanged(Editable editable) {
         if (editText.getText().toString().trim().length() > 0) {
             if (activity.getCurrentFocus() == editText) {
-                notifyTypyping(TypingMessageContent.TYPING_TEXT);
+                notifyTyping(TypingMessageContent.TYPING_TEXT);
             }
             sendButton.setVisibility(View.VISIBLE);
             extImageView.setVisibility(View.GONE);
@@ -355,7 +350,6 @@ public class ConversationInputPanel extends FrameLayout implements IEmotionSelec
         }
 
         TextMessageContent txtContent = new TextMessageContent(content.toString().trim());
-        //群聊才有@功能
         if (conversation.type == Conversation.ConversationType.Group) {
             MentionSpan[] mentions = content.getSpans(0, content.length(), MentionSpan.class);
             if (mentions != null && mentions.length > 0) {
@@ -381,19 +375,7 @@ public class ConversationInputPanel extends FrameLayout implements IEmotionSelec
     }
 
     public void onKeyboardShown() {
-        LogUtils.e("显示hideEmotionLayout");
         hideEmotionLayout();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                int isshown = emotionContainerFrameLayout.getVisibility();
-                int show2 = extContainerFrameLayout.getVisibility();
-                LogUtils.e("看里面看表情布局：" + isshown);
-                LogUtils.e("看里面看表情布局：" + show2);
-            }
-        }, 5000);
-
     }
 
     public void onKeyboardHidden() {
@@ -407,7 +389,6 @@ public class ConversationInputPanel extends FrameLayout implements IEmotionSelec
                 editText.getText().removeSpan(span);
             }
         }
-        //获取具体回合信息
         ConversationInfo conversationInfo = conversationViewModel.getConversationInfo(conversation);
         if (conversationInfo == null || TextUtils.isEmpty(conversationInfo.draft)) {
             return;
@@ -525,7 +506,7 @@ public class ConversationInputPanel extends FrameLayout implements IEmotionSelec
         rootLinearLayout.hideCurrentInput(editText);
     }
 
-    private void notifyTypyping(int type) {
+    private void notifyTyping(int type) {
         if (conversation.type == Conversation.ConversationType.Single) {
             long now = System.currentTimeMillis();
             if (now - lastTypingTime > TYPING_INTERVAL_IN_SECOND * 1000) {

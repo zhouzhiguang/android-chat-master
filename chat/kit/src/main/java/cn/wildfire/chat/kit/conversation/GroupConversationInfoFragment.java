@@ -1,6 +1,5 @@
 package cn.wildfire.chat.kit.conversation;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -23,6 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.zxing.common.StringUtils;
 import com.kyleduo.switchbutton.SwitchButton;
 
 import java.util.ArrayList;
@@ -216,7 +216,6 @@ public class GroupConversationInfoFragment extends Fragment implements Conversat
     }
 
 
-    @SuppressLint("FragmentLiveDataObserve")
     private void loadAndShowGroupMembers(boolean refresh) {
         groupViewModel.getGroupMembersLiveData(conversationInfo.conversation.target, refresh)
                 .observe(this, groupMembers -> {
@@ -359,10 +358,19 @@ public class GroupConversationInfoFragment extends Fragment implements Conversat
     @OnClick(R.id.myGroupNickNameOptionItemView)
     void updateMyGroupAlias() {
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .input("请输入你的群昵称", groupMember.alias, false, (dialog1, input) -> {
+                .input("请输入你的群昵称", groupMember.alias, true, (dialog1, input) -> {
+                    if (TextUtils.isEmpty(groupMember.alias)) {
+                        if (TextUtils.isEmpty(input.toString().trim())) {
+                            return;
+                        }
+                    } else if(groupMember.alias.equals(input.toString().trim())) {
+                        return;
+                    }
+                    
                     groupViewModel.modifyMyGroupAlias(groupInfo.target, input.toString().trim(), null, Collections.singletonList(0))
                             .observe(GroupConversationInfoFragment.this, operateResult -> {
                                 if (operateResult.isSuccess()) {
+                                    groupMember.alias = input.toString().trim();
                                     myGroupNickNameOptionItemView.setDesc(input.toString().trim());
                                 } else {
                                     Toast.makeText(getActivity(), "修改群昵称失败:" + operateResult.getErrorCode(), Toast.LENGTH_SHORT).show();

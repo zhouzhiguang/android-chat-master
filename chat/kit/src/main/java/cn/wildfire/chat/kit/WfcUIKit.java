@@ -161,7 +161,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
     }
 
     /**
-     * 当{@link androidx.lifecycle.ViewModel} 需要跨{@link android.app.Activity} 共享数据时使用
+     * 当{@link ViewModel} 需要跨{@link Activity} 共享数据时使用
      */
     public static <T extends ViewModel> T getAppScopeViewModel(@NonNull Class<T> modelClass) {
         if (!AppScopeViewModel.class.isAssignableFrom(modelClass)) {
@@ -170,7 +170,6 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
         return viewModelProvider.get(modelClass);
     }
 
-    //接电话
     @Override
     public void onReceiveCall(AVEngineKit.CallSession session) {
         List<String> participants = session.getParticipantIds();
@@ -250,6 +249,7 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
     private static void startActivity(Context context, Intent intent) {
         if (context instanceof Activity) {
             context.startActivity(intent);
+            ((Activity)context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } else {
             Intent main = new Intent(WfcIntent.ACTION_MAIN);
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -265,7 +265,6 @@ public class WfcUIKit implements AVEngineKit.AVEngineCallback, OnReceiveMessageL
 
     @Override
     public void onReceiveMessage(List<Message> messages, boolean hasMore) {
-
         if (isBackground) {
             // FIXME: 2018/5/28 只是临时方案，No_Persist消息，我觉得不应当到这儿，注册监听时，
             // 就表明自己关系哪些类型的消息, 设置哪些种类的消息

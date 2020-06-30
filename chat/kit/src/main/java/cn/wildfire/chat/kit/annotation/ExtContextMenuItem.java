@@ -15,9 +15,7 @@ import cn.wildfire.chat.kit.conversation.ext.core.ConversationExt;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface
-
-ExtContextMenuItem {
+public @interface ExtContextMenuItem {
     String title() default "";
 
     @StringRes int titleResId() default 0;
