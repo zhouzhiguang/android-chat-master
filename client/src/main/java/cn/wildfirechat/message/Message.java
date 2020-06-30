@@ -25,6 +25,7 @@ public class Message implements Parcelable {
      */
     public String[] toUsers;
     //消息内容
+
     public MessageContent content;
     public MessageDirection direction;
     public MessageStatus status;
