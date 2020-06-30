@@ -388,6 +388,7 @@ public class ChatManager {
                 return;
             }
             for (Message message : messages) {
+                //下面是退群 被人移除群聊 要
                 if ((message.content instanceof QuitGroupNotificationContent && ((QuitGroupNotificationContent) message.content).operator.equals(getUserId()))
                         || (message.content instanceof KickoffGroupMemberNotificationContent && ((KickoffGroupMemberNotificationContent) message.content).kickedMembers.contains(getUserId()))
                         || message.content instanceof DismissGroupNotificationContent) {
@@ -1487,6 +1488,7 @@ public class ChatManager {
 
                 @Override
                 public void onProgress(long uploaded, long total) throws RemoteException {
+
                 }
 
                 @Override
@@ -3337,6 +3339,8 @@ public class ChatManager {
 
 
     /**
+     * 暂时用不了
+     *
      * @param data      不能超过1M，为了安全，实际只有900K
      * @param mediaType 媒体类型，可选值参考{@link cn.wildfirechat.message.MessageContentMediaType}
      * @param callback
@@ -4009,7 +4013,7 @@ public class ChatManager {
 
         try {
             groupMember = mClient.getGroupMember(groupId, memberId);
-            LogUtils.e("看一下："+ groupMember);
+            LogUtils.e("看一下：" + groupMember);
             groupMemberCache.put(key, groupMember);
             return groupMember;
         } catch (RemoteException e) {

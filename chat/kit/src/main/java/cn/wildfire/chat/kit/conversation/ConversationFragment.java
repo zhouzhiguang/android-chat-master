@@ -88,6 +88,7 @@ import cn.wildfirechat.remote.UserSettingScope;
  * @UpdateDate: 2020/6/9 17:18
  * @UpdateRemark: 更新说明：
  * @Version: 1.0
+ *
  */
 public class ConversationFragment extends Fragment implements
         KeyboardAwareLinearLayout.OnKeyboardShownListener,

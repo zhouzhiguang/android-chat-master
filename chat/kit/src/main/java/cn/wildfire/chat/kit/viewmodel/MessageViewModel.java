@@ -346,7 +346,6 @@ public class MessageViewModel extends ViewModel implements OnReceiveMessageListe
             }
         });
     }
-
     public File mediaMessageContentFile(UiMessage message) {
 
         String dir = null;
