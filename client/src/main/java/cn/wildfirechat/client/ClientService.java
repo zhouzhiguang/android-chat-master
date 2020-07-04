@@ -18,6 +18,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
+import com.apkfuns.logutils.LogUtils;
 import com.tencent.mars.BaseEvent;
 import com.tencent.mars.Mars;
 import com.tencent.mars.app.AppLogic;
@@ -123,15 +124,15 @@ import static com.tencent.mars.xlog.Xlog.AppednerModeAsync;
  */
 
 public class ClientService extends Service implements SdtLogic.ICallBack,
-    AppLogic.ICallBack,
-    ProtoLogic.IConnectionStatusCallback,
-    ProtoLogic.IReceiveMessageCallback,
-    ProtoLogic.IUserInfoUpdateCallback,
-    ProtoLogic.ISettingUpdateCallback,
-    ProtoLogic.IFriendRequestListUpdateCallback,
-    ProtoLogic.IFriendListUpdateCallback,
-    ProtoLogic.IGroupInfoUpdateCallback,
-    ProtoLogic.IChannelInfoUpdateCallback, ProtoLogic.IGroupMembersUpdateCallback {
+        AppLogic.ICallBack,
+        ProtoLogic.IConnectionStatusCallback,
+        ProtoLogic.IReceiveMessageCallback,
+        ProtoLogic.IUserInfoUpdateCallback,
+        ProtoLogic.ISettingUpdateCallback,
+        ProtoLogic.IFriendRequestListUpdateCallback,
+        ProtoLogic.IFriendListUpdateCallback,
+        ProtoLogic.IGroupInfoUpdateCallback,
+        ProtoLogic.IChannelInfoUpdateCallback, ProtoLogic.IGroupMembersUpdateCallback {
     private Map<Integer, Class<? extends MessageContent>> contentMapper = new HashMap<>();
 
     private int mConnectionStatus;
@@ -296,6 +297,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
             }
         }
 
+        //发送消息
         private ProtoMessage convertMessage(Message msg) {
             ProtoMessage protoMessage = new ProtoMessage();
 
@@ -1978,6 +1980,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
     }
 
     private MessageContent contentOfType(int type) {
+        LogUtils.e("看看这个type：" + type);
         Class<? extends MessageContent> cls = contentMapper.get(type);
         if (cls != null) {
             try {
@@ -2003,6 +2006,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         return out;
     }
 
+    //转换消息 ProtoMessage 转 Message
     private Message convertProtoMessage(ProtoMessage protoMessage) {
         if (protoMessage == null || TextUtils.isEmpty(protoMessage.getTarget())) {
             return null;
@@ -2031,6 +2035,7 @@ public class ClientService extends Service implements SdtLogic.ICallBack,
         } catch (Exception e) {
             android.util.Log.e(TAG, "decode message error, fallback to unknownMessageContent. " + protoMessage.getContent().getType());
             e.printStackTrace();
+            //解析报错了
             if (msg.content.getPersistFlag() == PersistFlag.Persist || msg.content.getPersistFlag() == PersistFlag.Persist_And_Count) {
                 msg.content = new UnknownMessageContent();
                 ((UnknownMessageContent) msg.content).setOrignalPayload(payload);

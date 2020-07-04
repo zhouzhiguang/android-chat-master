@@ -28,12 +28,24 @@ import cn.wildfirechat.model.PCOnlineInfo;
 import cn.wildfirechat.model.UserInfo;
 import cn.wildfirechat.remote.ChatManager;
 
+/**
+ * @ProjectName:
+ * @Package: cn.wildfire.chat.kit.conversationlist
+ * @ClassName: ConversationListFragment
+ * @Description: 聊天会话主类 java类作用描述
+ * @Author: 作者名
+ * @CreateDate: 2020/6/30 9:46
+ * @UpdateUser: 更新者：
+ * @UpdateDate: 2020/6/30 9:46
+ * @UpdateRemark: 更新说明：
+ * @Version: 1.0
+ */
 public class ConversationListFragment extends ProgressFragment {
     private RecyclerView recyclerView;
     private ConversationListAdapter adapter;
     private static final List<Conversation.ConversationType> types = Arrays.asList(Conversation.ConversationType.Single,
-        Conversation.ConversationType.Group,
-        Conversation.ConversationType.Channel);
+            Conversation.ConversationType.Group,
+            Conversation.ConversationType.Channel);
     private static final List<Integer> lines = Arrays.asList(0);
 
     private ConversationListViewModel conversationListViewModel;
@@ -68,8 +80,8 @@ public class ConversationListFragment extends ProgressFragment {
     private void init() {
         adapter = new ConversationListAdapter(this);
         conversationListViewModel = ViewModelProviders
-            .of(getActivity(), new ConversationListViewModelFactory(types, lines))
-            .get(ConversationListViewModel.class);
+                .of(getActivity(), new ConversationListViewModelFactory(types, lines))
+                .get(ConversationListViewModel.class);
         conversationListViewModel.conversationListLiveData().observe(this, conversationInfos -> {
             showContent();
             adapter.setConversationInfos(conversationInfos);

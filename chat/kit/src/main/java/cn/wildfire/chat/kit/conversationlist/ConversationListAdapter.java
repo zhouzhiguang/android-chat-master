@@ -92,6 +92,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<RecyclerView.V
         return null;
     }
 
+    //点击查看消息聊天详情
     private void processConversationClick(ConversationViewHolder viewHolder, View itemView) {
         itemView.setOnClickListener(viewHolder::onClick);
     }

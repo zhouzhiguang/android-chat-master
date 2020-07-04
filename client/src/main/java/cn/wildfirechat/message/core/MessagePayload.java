@@ -25,7 +25,6 @@ public class MessagePayload implements Parcelable {
     public int mentionedType;
     public List<String> mentionedTargets;
 
-
     public MessageContentMediaType mediaType;
     public String remoteMediaUrl;
 

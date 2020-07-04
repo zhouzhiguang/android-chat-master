@@ -162,6 +162,7 @@ public abstract class ConversationViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    //聊天了==
     public void onClick(View itemView) {
         Intent intent = new Intent(fragment.getActivity(), ConversationActivity.class);
         intent.putExtra("conversation", conversationInfo.conversation);
